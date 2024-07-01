@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+    <ItemGroup>
+        <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" />
+        <PackageReference Include="Serilog.AspNetCore" />
+        <PackageReference Include="Serilog.Sinks.MSSqlServer" />
+        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\UserGroupSite.Client\UserGroupSite.Client.csproj" />
+      <ProjectReference Include="..\UserGroupSite.Data\UserGroupSite.Data.csproj" />
+    </ItemGroup>
+</Project>
