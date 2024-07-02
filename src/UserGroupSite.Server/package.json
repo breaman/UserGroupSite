@@ -1,0 +1,13 @@
+{
+  "version": "1.0.0",
+  "name": "asp.net",
+  "private": true,
+  "devDependencies": {
+    "beercss": "3.6.5",
+    "copyfiles": "2.4.1",
+    "rimraf": "5.0.7"
+  },
+  "scripts": {
+    "copy-beercss": "copyfiles -u 4 node_modules/beercss/dist/cdn/beer.min.css wwwroot/css"
+  }
+}
