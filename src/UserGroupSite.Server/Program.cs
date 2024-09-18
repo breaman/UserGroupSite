@@ -1,9 +1,15 @@
 using System.Diagnostics;
+using FluentValidation;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Debugging;
 using UserGroupSite.Data.Models;
 using UserGroupSite.Server.Components;
+using UserGroupSite.Server.Components.Auth;
+using UserGroupSite.Server.Components.Email;
+using UserGroupSite.Shared.DTOs;
 using _Imports = UserGroupSite.Client._Imports;
 
 SelfLog.Enable(msg => Debug.WriteLine(msg));
@@ -36,11 +42,53 @@ try
     builder.Services.AddHttpClient();
     // End "core" services to the container
     
+    // Add blazor auth stuff
+    builder.Services.AddCascadingAuthenticationState();
+    builder.Services.AddScoped<IdentityUserAccessor>();
+    builder.Services.AddScoped<IdentityRedirectManager>();
+    builder.Services.AddScoped<AuthenticationStateProvider, PersistingServerAuthenticationStateProvider>();
+    // To ensure custom claims are added to new identity when principal is refreshed.
+    builder.Services.ConfigureOptions<ConfigureSecurityStampOptions>();
+    // End blazor auth stuff
+    
+    // Add identity stuff
+    builder.Services.AddAuthorization();
+    builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultScheme = IdentityConstants.ApplicationScheme;
+            options.DefaultSignInScheme = IdentityConstants.ExternalScheme;
+        })
+        .AddIdentityCookies();
+
+    builder.Services.AddIdentityCore<User>(options =>
+        {
+            options.Password.RequireDigit = false;
+            options.Password.RequiredLength = 6;
+            options.Password.RequireLowercase = false;
+            options.Password.RequireUppercase = false;
+            options.Password.RequireNonAlphanumeric = false;
+
+            options.SignIn.RequireConfirmedEmail = true;
+        })
+        // AddRoles isn't added from the AddIdentityCore, so if you want to use roles, this must be explicitly added
+        .AddRoles<Role>()
+        .AddEntityFrameworkStores<ApplicationDbContext>()
+        .AddSignInManager()
+        .AddDefaultTokenProviders();
+    // End identity stuff
+    
+    // Add FluentValidator stuff
+    builder.Services.AddTransient<IValidator<LoginDto>, LoginDtoValidator>();
+    builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
+    // End FluentValidator stuff
+    
     // Add application stuff
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
         options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"))
             .EnableSensitiveDataLogging());
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+    
+    builder.Services.AddSingleton<IEnhancedEmailSender<User>, IdentityNoOpEmailSender>();
 
     // builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("SiteOptions"));
     // End application stuff
@@ -68,13 +116,16 @@ try
     app.MapRazorComponents<App>()
         .AddInteractiveWebAssemblyRenderMode()
         .AddAdditionalAssemblies(typeof(_Imports).Assembly);
+    
+    // Add additional endpoints required by the Identity /Account Razor components.
+    app.MapAdditionalIdentityEndpoints();
 
     if (!isMigrations)
     {
         using var scope = app.Services.CreateScope();
         var serviceProvider = scope.ServiceProvider;
 
-        // InitializeData.Initialize(serviceProvider);
+        InitializeData.Initialize(serviceProvider);
     }
 
     app.Run();
