@@ -1,0 +1,62 @@
+@page "/Admin/ManageCategories"
+@page "/Admin/ManageCategories/{CategoryId:int}"
+<h3>Manage Categories</h3>
+<div class="top-margin">
+    <table class="border">
+        <thead>
+        <tr>
+            <th>Name</th>
+            <th>Abbreviation</th>
+            <th>Color</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var category in _categories)
+        {
+            <tr>
+                <td>@category?.Name</td>
+                <td>@category?.CategoryAbbreviation</td>
+                <td>@category?.BackgroundColor</td>
+                <td class="right-align">
+                    <form action="@SharedConstants.CategoryApiUrl/delete" method="post" id="deleteForm" style="display: inline-block">
+                        <AntiforgeryToken/>
+                        <input type="hidden" name="CategoryId" value="@category.Id"/>
+                        <a class="button" onClick="(() => { var deleteForm = document.getElementById('deleteForm'); deleteForm.submit(); })()">
+                            Delete
+                        </a>
+                    </form>
+                    <a href="/Admin/ManageCategories/@category?.Id" class="button">Edit</a>
+                </td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>
+<div class="top-margin">
+    <div>
+        <EditForm Model="Dto" method="post" OnSubmit="SubmitCategory" FormName="suggestTopic">
+            <FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="true" />
+            <ValidationSummary role="alert" />
+            <input type="hidden" name="Dto.CategoryId" @bind-value="Dto.CategoryId" />
+            <div class="field label border small-round">
+                <InputText @bind-Value="Dto.Name" id="title" placeholder=" " />
+                <label for="title">Name</label>
+            </div>
+            <div class="field label border small-round">
+                <InputText @bind-Value="Dto.CategoryAbbreviation" id="abbreviation" placeholder=" " />
+                <label for="abbreviation">Abbreviation</label>
+            </div>
+            <div class="field label border small-round">
+                <InputText @bind-Value="Dto.BackgroundColor" id="backgroundColor" placeholder=" " />
+                <label for="backgroundColor">Background Color</label>
+            </div>
+            <div>
+                <button type="submit">@_actionType Category</button>
+            </div>
+        </EditForm>
+    </div>
+    <div class="@(_categorySaved ? "green-text" : "red-text")" style="@(string.IsNullOrWhiteSpace(_messageResult) ? "display: none" : "display: block")">
+        @_messageResult
+    </div>
+</div>

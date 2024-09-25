@@ -12,21 +12,17 @@ public partial class RegisterConfirmation : ComponentBase
     private string? emailConfirmationLink;
     private string? statusMessage;
 
-    [CascadingParameter] private HttpContext HttpContext { get; set; } = default;
+    [CascadingParameter] private HttpContext HttpContext { get; set; } = default!;
     
     [SupplyParameterFromQuery]
     private string? Email { get; set; }
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
-    
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; }
-    [Inject]
-    private UserManager<User> UserManager { get; set; }
-    [Inject]
-    private IEnhancedEmailSender<User> EmailSender { get; set; }
-    [Inject]
-    private NavigationManager NavigationManager { get; set; }
+
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<User> UserManager { get; set; } = default!;
+    [Inject] private IEnhancedEmailSender<User> EmailSender { get; set; } = default!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -49,7 +45,7 @@ public partial class RegisterConfirmation : ComponentBase
             code = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(code));
             emailConfirmationLink = NavigationManager.GetUriWithQueryParameters(
                 NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
-                new Dictionary<string, object?> { ["userId"] = userId, ["code"] = code, ["returnUrl"] = ReturnUrl });
+                new Dictionary<string, object?> { ["email"] = user.Email, ["code"] = code, ["returnUrl"] = ReturnUrl });
         }
     }
 }

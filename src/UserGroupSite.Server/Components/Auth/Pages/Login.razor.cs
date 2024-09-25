@@ -1,15 +1,13 @@
 using System.Security.Claims;
 using Blazored.FluentValidation;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
-using UserGroupSite.Data.Models;
 using UserGroupSite.Shared.DTOs;
 
 namespace UserGroupSite.Server.Components.Auth.Pages;
 
 public partial class Login : ComponentBase
 {
-    private FluentValidationValidator _fluentValidationValidator;
+    private FluentValidationValidator _fluentValidationValidator = default!;
     private string? errorMessage;
 
     [CascadingParameter]
@@ -21,16 +19,11 @@ public partial class Login : ComponentBase
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 
-    [Inject]
-    private ILogger<Login> Logger { get; set; }
-    [Inject]
-    private UserManager<User> UserManager { get; set; }
-    [Inject]
-    private SignInManager<User> SignInManager { get; set; }
-    [Inject]
-    private ApplicationDbContext DbContext { get; set; }
-    [Inject]
-    private IdentityRedirectManager RedirectManager { get; set; }
+    [Inject] private ILogger<Login> Logger { get; set; } = default!;
+    [Inject] private UserManager<User> UserManager { get; set; } = default!;
+    [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
+    [Inject] private ApplicationDbContext DbContext { get; set; } = default!;
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
 
     private async Task LoginUser()
     {

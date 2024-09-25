@@ -1,16 +1,20 @@
 using System.Diagnostics;
+using Blazored.Toast;
 using FluentValidation;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Debugging;
-using UserGroupSite.Data.Models;
+using UserGroupSite.Data.Interfaces;
+using UserGroupSite.Server.Apis;
 using UserGroupSite.Server.Components;
 using UserGroupSite.Server.Components.Auth;
 using UserGroupSite.Server.Components.Email;
+using UserGroupSite.Server.Models;
 using UserGroupSite.Shared.DTOs;
 using _Imports = UserGroupSite.Client._Imports;
+using SharedConstants = UserGroupSite.Shared.Models.Constants;
 
 SelfLog.Enable(msg => Debug.WriteLine(msg));
 
@@ -75,11 +79,18 @@ try
         .AddEntityFrameworkStores<ApplicationDbContext>()
         .AddSignInManager()
         .AddDefaultTokenProviders();
+    
+    builder.Services.AddAuthorization(options =>
+    {
+        //options.AddPolicy("IsAdmin", p => p.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, SharedConstants.Administrator));
+        options.AddPolicy(SharedConstants.IsAdmin, p => p.RequireRole(SharedConstants.Administrator));
+    });
     // End identity stuff
     
     // Add FluentValidator stuff
     builder.Services.AddTransient<IValidator<LoginDto>, LoginDtoValidator>();
     builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
+    builder.Services.AddTransient<IValidator<CategoryDto>, CategoryDtoValidator>();
     // End FluentValidator stuff
     
     // Add application stuff
@@ -89,8 +100,10 @@ try
     builder.Services.AddDatabaseDeveloperPageExceptionFilter();
     
     builder.Services.AddSingleton<IEnhancedEmailSender<User>, IdentityNoOpEmailSender>();
+    builder.Services.AddScoped<IUserService, HttpUserService>();
 
     // builder.Services.Configure<SiteOptions>(builder.Configuration.GetSection("SiteOptions"));
+    builder.Services.AddBlazoredToast();
     // End application stuff
 
     var app = builder.Build();
@@ -116,7 +129,8 @@ try
     app.MapRazorComponents<App>()
         .AddInteractiveWebAssemblyRenderMode()
         .AddAdditionalAssemblies(typeof(_Imports).Assembly);
-    
+
+    app.MapCategoriesApi();
     // Add additional endpoints required by the Identity /Account Razor components.
     app.MapAdditionalIdentityEndpoints();
 

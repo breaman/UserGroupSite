@@ -29,7 +29,7 @@ public class InitializeData
                 foreach (var error in identityResult.Errors)
                     logger.LogError($"{error.Code}: {error.Description}");
             
-            createTask = roleManager.CreateAsync(new Role { Name = SharedConstants.Admin });
+            createTask = roleManager.CreateAsync(new Role { Name = SharedConstants.Administrator });
             createTask.Wait();
             identityResult = createTask.Result;
 

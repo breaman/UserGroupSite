@@ -1,8 +1,6 @@
 using System.Text;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using UserGroupSite.Data.Models;
 using UserGroupSite.Server.Components.Email;
 
 namespace UserGroupSite.Server.Components.Auth.Pages;
@@ -17,11 +15,11 @@ public partial class ConfirmEmail : ComponentBase
 
     [SupplyParameterFromQuery] private string? Code { get; set; }
 
-    [Inject] private IdentityRedirectManager RedirectManager { get; set; }
-    [Inject] private UserManager<User> UserManager { get; set; }
-    [Inject] private ILogger<ConfirmEmail> Logger { get; set; }
-    [Inject] private NavigationManager NavigationManager { get; set; }
-    [Inject] private IEnhancedEmailSender<User> EmailSender { get; set; }
+    [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private UserManager<User> UserManager { get; set; } = default!;
+    [Inject] private ILogger<ConfirmEmail> Logger { get; set; } = default!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private IEnhancedEmailSender<User> EmailSender { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -41,7 +39,6 @@ public partial class ConfirmEmail : ComponentBase
             if (result.Succeeded)
             {
                 Logger.LogInformation("Successfully confirmed {Email}", Email);
-                var teamsLink = NavigationManager.ToAbsoluteUri("Teams").AbsoluteUri;
                 if (EmailSender is IdentityNoOpEmailSender)
                 {
                     // Once you add a real email sender, you should remove this code that lets you confirm the account

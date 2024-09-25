@@ -1,10 +1,8 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using Blazored.FluentValidation;
-using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
-using UserGroupSite.Data.Models;
 using UserGroupSite.Server.Components.Email;
 using UserGroupSite.Shared.DTOs;
 using SharedConstants = UserGroupSite.Shared.Models.Constants;
@@ -13,7 +11,7 @@ namespace UserGroupSite.Server.Components.Auth.Pages;
 
 public partial class Register : ComponentBase
 {
-    private FluentValidationValidator _fluentValidationValidator;
+    private FluentValidationValidator _fluentValidationValidator = default!;
     private List<IdentityError>? _identityErrors = new();
 
     [SupplyParameterFromForm]
@@ -21,24 +19,18 @@ public partial class Register : ComponentBase
 
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
-    
-    [Inject]
-    protected UserManager<User>? UserManager { get; set; }
-    
-    [Inject]
-    protected SignInManager<User>? SignInManager { get; set; }
-    
-    [Inject]
-    protected ILogger<Register> Logger { get; set; }
-    
-    [Inject]
-    protected NavigationManager NavigationManager { get; set; }
-    
-    [Inject]
-    protected IEnhancedEmailSender<User> EmailSender { get; set; }
 
-    [Inject]
-    internal IdentityRedirectManager RedirectManager { get; set; }
+    [Inject] protected UserManager<User> UserManager { get; set; } = default!;
+
+    [Inject] protected SignInManager<User> SignInManager { get; set; } = default!;
+
+    [Inject] protected ILogger<Register> Logger { get; set; } = default!;
+
+    [Inject] protected NavigationManager NavigationManager { get; set; } = default!;
+
+    [Inject] protected IEnhancedEmailSender<User> EmailSender { get; set; } = default!;
+
+    [Inject] internal IdentityRedirectManager RedirectManager { get; set; } = default!;
     
     private async Task RegisterUser()
     {
@@ -48,14 +40,14 @@ public partial class Register : ComponentBase
         {
             var user = new User
             {
-                FirstName = Dto.FirstName?.Trim(),
-                LastName = Dto.LastName?.Trim(),
-                Email = Dto.Email?.Trim(),
-                UserName = Dto.Email?.Trim(),
+                FirstName = Dto.FirstName.Trim(),
+                LastName = Dto.LastName.Trim(),
+                Email = Dto.Email.Trim(),
+                UserName = Dto.Email.Trim(),
                 MemberSince = DateTime.UtcNow
             };
 
-            var result = await UserManager.CreateAsync(user, Dto.Password?.Trim());
+            var result = await UserManager.CreateAsync(user, Dto.Password.Trim());
 
             if (!result.Succeeded)
             {
@@ -73,7 +65,7 @@ public partial class Register : ComponentBase
                 NavigationManager.ToAbsoluteUri("Account/ConfirmEmail").AbsoluteUri,
                 new Dictionary<string, object?> { ["userId"] = user.Id, ["code"] = code, ["returnUrl"] = ReturnUrl });
 
-            await EmailSender.SendConfirmationLinkAsync(user, user.Email, HtmlEncoder.Default.Encode(callbackUrl));
+            await EmailSender.SendConfirmationLinkAsync(user, Dto.Email, HtmlEncoder.Default.Encode(callbackUrl));
 
             if (UserManager.Options.SignIn.RequireConfirmedEmail)
                 RedirectManager.RedirectTo("Account/RegisterConfirmation",

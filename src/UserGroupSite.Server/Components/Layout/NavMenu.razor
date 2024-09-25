@@ -1,0 +1,59 @@
+@using Microsoft.AspNetCore.Components.Authorization
+<header class="l">
+    <nav>
+        <h6>
+            <NavLink href="/">Spokane User Groups</NavLink>
+        </h6>
+        <nav class="max right-align">
+            <NavLink href="/topicsuggestions">Topic Suggestions</NavLink>
+            <AuthorizeView>
+                <Authorized>
+                    <AuthorizeView Policy="@SharedConstants.IsAdmin" Context="adminContext">
+                        <Authorized>
+                            <NavLink href="/admin">Admin</NavLink>
+                        </Authorized>
+                    </AuthorizeView>
+                    <form action="/Account/Logout" method="post" id="logoutForm" class="center-align">
+                        <AntiforgeryToken/>
+                        <input type="hidden" name="ReturnUrl" value="@_currentUrl"/>
+                        <a onClick="(() => { var logoutForm = document.getElementById('logoutForm'); logoutForm.submit(); })()">
+                            Log Off
+                        </a>
+                    </form>
+                </Authorized>
+                <NotAuthorized>
+                    <NavLink href="/account/register">Register</NavLink>
+                    <NavLink class="ml-4" href="@LoginPath">Log in</NavLink>
+                </NotAuthorized>
+            </AuthorizeView>
+        </nav>
+    </nav>
+</header>
+<header class="s m">
+    <h6 class="center-align top-padding">
+        <NavLink href="/">Spokane User Groups</NavLink>
+    </h6>
+    <nav class="no-margin center-align">
+        <NavLink href="/topicsuggestions">Topic Suggestions</NavLink>
+        <AuthorizeView>
+            <Authorized>
+                <AuthorizeView Policy="@SharedConstants.IsAdmin" Context="adminContext">
+                    <Authorized>
+                        <NavLink href="/admin">Admin</NavLink>
+                    </Authorized>
+                </AuthorizeView>
+                <form action="/Account/Logout" method="post" id="logoutForm" class="center-align">
+                    <AntiforgeryToken/>
+                    <input type="hidden" name="ReturnUrl" value="@_currentUrl"/>
+                    <a onClick="(() => { var logoutForm = document.getElementById('logoutForm'); logoutForm.submit(); })()">
+                        Log Off
+                    </a>
+                </form>
+            </Authorized>
+            <NotAuthorized>
+                <NavLink href="/account/register">Register</NavLink>
+                <NavLink class="ml-4" href="@LoginPath">Log in</NavLink>
+            </NotAuthorized>
+        </AuthorizeView>
+    </nav>
+</header>

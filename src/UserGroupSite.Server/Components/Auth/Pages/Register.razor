@@ -1,11 +1,12 @@
 @page "/Account/Register"
+@using Microsoft.AspNetCore.Identity
 
 <h3>Register</h3>
 
 <div>
     <div>
         <ul>
-            @foreach (var errorMessage in _identityErrors)
+            @foreach (var errorMessage in (_identityErrors ?? Enumerable.Empty<IdentityError>()))
             {
                 <li>@errorMessage.Description</li>
             }
@@ -35,6 +36,6 @@
             <label for="lastName">Last Name</label>
         </div>
         <button type="submit">Create Account</button>
-        <a class="button">Cancel</a>
+        <a class="button secondary">Cancel</a>
     </EditForm>
 </div>

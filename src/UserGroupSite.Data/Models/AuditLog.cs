@@ -7,7 +7,7 @@ public class AuditLog : EntityBase
     public string TableName { get; set; } = null!;
     public DateTime DateTime { get; set; }
     public string? OldValues { get; set; }
-    public string NewValues { get; set; } = null!;
+    public string? NewValues { get; set; }
     public string? AffectedColumns { get; set; }
     public string PrimaryKey { get; set; } = null!;
 }
