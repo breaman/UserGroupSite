@@ -1,0 +1,12 @@
+@page "/event/{slug}"
+
+@if (_eventDto is not null)
+{
+    <h3>@_eventDto.Title</h3>
+    <h6>Presented by @_eventDto.SpeakerName</h6>
+    <div class="row">
+        <p class="max">@_eventDto.ConvertedDateTime</p>
+        <span class="chip round" style="background-color: #@_eventDto.CategoryColor; color: white">@_eventDto.CategoryName</span>
+    </div>
+    <p>@((MarkupString)Markdig.Markdown.ToHtml(_eventDto.Description ?? ""))</p>
+}

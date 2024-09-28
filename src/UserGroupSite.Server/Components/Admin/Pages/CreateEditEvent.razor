@@ -1,0 +1,82 @@
+@page "/Admin/CreateEvent"
+@page "/Admin/EditEvent/{EventId:int?}"
+
+<div class="row">
+    <h3 class="max">@((_isEditing) ? "Edit" : "Create") Event</h3>
+
+    @if (_isEditing)
+    {
+        <div>
+            <form action="@SharedConstants.EventApiUrl/delete" method="post" id="deleteForm" style="display: inline-block">
+                <AntiforgeryToken/>
+                <input type="hidden" name="EventId" value="@Dto.EventId"/>
+                <a class="button" onClick="(() => { var deleteForm = document.getElementById('deleteForm'); deleteForm.submit(); })()">
+                    Delete
+                </a>
+            </form>
+        </div>
+    }
+</div>
+<div>
+    <EditForm Model="Dto" OnSubmit="SaveEvent" FormName="CreateEvent">
+        <FluentValidationValidator
+            @ref="_fluentValidationValidator" DisableAssemblyScanning="true"/>
+        <ValidationSummary class="text-sm text-red-500 px-8" role="alert"/>
+        <input type="hidden" name="Dto.EventId" @bind-value="Dto.EventId"/>
+        <div class="field label border small-round">
+            <InputText @bind-Value="Dto.Title" id="title" placeholder=" "/>
+            <label for="title">Title</label>
+        </div>
+        <div class="field">
+            <div class="row no-padding">
+                <div class="max">
+                    <div class="field label border small-round">
+                        <InputText @bind-Value="Dto.Slug" id="slug" placeholder=" "/>
+                        <label for="slug">Slug</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="field label border small-round">
+            <InputDate Type="InputDateType.DateTimeLocal" @bind-Value="Dto.EventDate" id="eventDate" placeholder=" "/>
+            <label for="eventDate">Event Date/Time (in Pacific Time)</label>
+        </div>
+        <div class="field textarea label border small-round">
+            <InputTextArea @bind-Value="Dto.Description" id="description" placeholder=" "></InputTextArea>
+            <label for="description">Description</label>
+        </div>
+        <div class="field label suffix border">
+            <InputSelect id="category" @bind-Value="Dto.CategoryId">
+                @foreach (var category in _categories)
+                {
+                    <option value="@category.Id">@category.Name</option>
+                }
+            </InputSelect>
+            <label>Category</label>
+            <i>arrow_drop_down</i>
+        </div>
+        <div class="field label suffix border">
+            <InputSelect id="speaker" @bind-Value="Dto.SpeakerId">
+                @foreach (var user in _users)
+                {
+                    <option value="@user.Id">@user.FirstName @user.LastName</option>
+                }
+            </InputSelect>
+            <label>Speaker</label>
+            <i>arrow_drop_down</i>
+        </div>
+        <label class="checkbox">
+            <InputCheckbox @bind-Value="Dto.IsPublished" id="published" placeholder=" "/>
+            <span for="published">Is Published</span>
+        </label>
+        <div>
+            <button type="submit" value="Save" id="saveBn">
+                <span>Save Event</span>
+            </button>
+            <a href="/admin/manageevents" class="button secondary">Cancel</a>
+        </div>
+    </EditForm>
+</div>
+<div class="@(_eventSaved ? "green-text" : "red-text")" style="@(string.IsNullOrWhiteSpace(_messageResult) ? "display: none" : "display: block")">
+    @_messageResult
+</div>

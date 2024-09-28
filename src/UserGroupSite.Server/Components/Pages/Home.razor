@@ -1,5 +1,29 @@
 @page "/"
 
-<h3>Home</h3>
+<h4>Upcoming Event</h4>
 
-<p class="pink-text">This is just a simple placeholder home page for now?</p>
+<div class="grid">
+    <div class="s12 m6 l4"></div>
+    <div class="s12 m6 l4">
+        @if (_upcomingEvent is not null)
+        {
+            <UpcomingEvent SpeakingEvent="_upcomingEvent" />
+        }
+        else
+        {
+            <p>Check back later, there are no upcoming events at the time</p>
+        }
+    </div>
+    <div class="s12 m6 l4"></div>
+</div>
+
+<h4>Events</h4>
+
+<div class="grid">
+    @foreach (var speakingEvent in _speakingEvents)
+    {
+        <div class="s12 m6 l4">
+            <EventCard SpeakingEvent="speakingEvent"/>
+        </div>
+    }
+</div>

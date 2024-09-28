@@ -14,10 +14,9 @@ public partial class ManageCategories : ComponentBase
     private string _messageResult = default!;
     private bool _categorySaved = false;
     private string _actionType = "Create";
-    
-    [Parameter]
-    public int? CategoryId { get; set; }
-    
+
+    [Parameter] public int? CategoryId { get; set; }
+
     [Inject]
     private ApplicationDbContext DbContext { get; set; } = default!;
     
@@ -52,7 +51,7 @@ public partial class ManageCategories : ComponentBase
                 Logger.LogInformation("Attempting to update category");
                 var category = await DbContext.Categories.SingleOrDefaultAsync(c => c.Id == Dto.CategoryId);
                 category.FromDto(Dto);
-                // DbContext.Categories.Update(category);
+
                 var saveResult = await DbContext.SaveChangesAsync();
                 if (saveResult > 0)
                 {

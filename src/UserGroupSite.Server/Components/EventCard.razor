@@ -1,0 +1,14 @@
+<a href="@NavigateUrl">
+    <article>
+        <h5>@SpeakingEvent.Title</h5>
+        <div class="row">
+        <div class="max">
+            <div>@SpeakingEvent.SpeakerName</div>
+            <div>@SpeakingEvent.ConvertedDateTime</div>
+        </div>
+        <span class="chip round" style="background-color: #@SpeakingEvent.CategoryColor; color: white">@SpeakingEvent.CategoryName</span>
+        </div>
+        <hr class="top-margin bottom-margin" />
+        <div>@ShortenedDescription</div>
+    </article>
+</a>

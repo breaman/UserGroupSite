@@ -82,7 +82,6 @@ try
     
     builder.Services.AddAuthorization(options =>
     {
-        //options.AddPolicy("IsAdmin", p => p.RequireAuthenticatedUser().RequireClaim(ClaimTypes.Role, SharedConstants.Administrator));
         options.AddPolicy(SharedConstants.IsAdmin, p => p.RequireRole(SharedConstants.Administrator));
     });
     // End identity stuff
@@ -91,6 +90,7 @@ try
     builder.Services.AddTransient<IValidator<LoginDto>, LoginDtoValidator>();
     builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
     builder.Services.AddTransient<IValidator<CategoryDto>, CategoryDtoValidator>();
+    builder.Services.AddTransient<IValidator<EventDto>, EventDtoValidator>();
     // End FluentValidator stuff
     
     // Add application stuff
@@ -131,6 +131,7 @@ try
         .AddAdditionalAssemblies(typeof(_Imports).Assembly);
 
     app.MapCategoriesApi();
+    app.MapEventsApi();
     // Add additional endpoints required by the Identity /Account Razor components.
     app.MapAdditionalIdentityEndpoints();
 

@@ -1,0 +1,13 @@
+@page "/Admin/ManageEvents"
+<h3>Manage Events</h3>
+<div class="grid">
+    @foreach (var speakingEvent in _speakingEvents)
+    {
+        <div class="s12 m6 l4">
+            <EventCard SpeakingEvent="speakingEvent" IsEditMode="true"/>
+        </div>
+    }
+</div>
+<div class="margin-top">
+    <a href="/Admin/CreateEvent" class="button">Create Event</a>
+</div>

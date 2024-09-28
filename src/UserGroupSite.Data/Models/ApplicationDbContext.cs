@@ -10,6 +10,7 @@ public class ApplicationDbContext : IdentityDbContext<User, Role, int>
 
     public DbSet<AuditLog> AuditLogs => Set<AuditLog>();
     public DbSet<Category> Categories => Set<Category>();
+    public DbSet<SpeakingEvent> SpeakingEvents => Set<SpeakingEvent>();
 
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
     {
