@@ -1,0 +1,13 @@
+@page "/topicsuggestions"
+
+<h3>Topic Suggestions</h3>
+
+<SuggestionSubmission IsAuthenticated="_isAuthenticated" />
+
+<div class="top-margin">
+    @foreach (var topicSuggestion in _topicSuggestions)
+    {
+        <SuggestedTopic IsAuthenticated="_isAuthenticated" Suggestion="topicSuggestion" />
+    }
+</div>
+

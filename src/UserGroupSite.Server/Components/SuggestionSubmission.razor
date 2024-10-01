@@ -1,0 +1,23 @@
+@if (IsAuthenticated.HasValue && IsAuthenticated.Value)
+{
+<div>
+    <EditForm Model="Dto" method="post" OnSubmit="SubmitSuggestion" FormName="suggestTopic">
+        <FluentValidationValidator @ref="_fluentValidationValidator" DisableAssemblyScanning="true" />
+        <ValidationSummary role="alert" />
+        <div class="field label border small-round">
+            <InputText @bind-Value="Dto.Title" id="title" placeholder=" " />
+            <label for="title">Title</label>
+        </div>
+        <div class="field label border small-round">
+            <InputText @bind-Value="Dto.Description" id="description" placeholder=" " />
+            <label for="description">Description</label>
+        </div>
+        <div>
+            <button type="submit">Submit Suggestion</button>
+        </div>
+    </EditForm>
+</div>
+<div class="@(_suggestionSaved ? "green-text" : "red-text")" style="@(string.IsNullOrWhiteSpace(_messageResult) ? "display: none" : "display: block")">
+    @_messageResult
+</div>
+}

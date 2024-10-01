@@ -1,0 +1,11 @@
+<article class="no-padding">
+    <div class="padding">
+        <h5>@Suggestion?.Title</h5>
+        <p>@Suggestion?.Description</p>
+        @if (IsAuthenticated.HasValue && IsAuthenticated.Value) {
+        <nav>
+            <button>Sign Up</button>
+        </nav>
+        }
+    </div>
+</article>
