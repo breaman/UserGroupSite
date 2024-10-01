@@ -1,19 +1,20 @@
 @page "/Admin/CreateEvent"
 @page "/Admin/EditEvent/{EventId:int?}"
 
-<div class="row">
+<div class="row bottom-margin">
     <h3 class="max">@((_isEditing) ? "Edit" : "Create") Event</h3>
 
     @if (_isEditing)
     {
         <div>
-            <form action="@SharedConstants.EventApiUrl/delete" method="post" id="deleteForm" style="display: inline-block">
-                <AntiforgeryToken/>
-                <input type="hidden" name="EventId" value="@Dto.EventId"/>
-                <a class="button" onClick="(() => { var deleteForm = document.getElementById('deleteForm'); deleteForm.submit(); })()">
-                    Delete
-                </a>
-            </form>
+            @* <form action="@SharedConstants.EventApiUrl/delete" method="post" id="deleteForm" style="display: inline-block"> *@
+            @*     <AntiforgeryToken/> *@
+            @*     <input type="hidden" name="EventId" value="@Dto.EventId"/> *@
+            @*     <a class="button" onClick="(() => { var deleteForm = document.getElementById('deleteForm'); deleteForm.submit(); })()"> *@
+            @*         Delete *@
+            @*     </a> *@
+            @* </form> *@
+            <button @onclick="() => DeleteEvent(Dto.EventId)">Delete</button>
         </div>
     }
 </div>
@@ -22,9 +23,9 @@
         <FluentValidationValidator
             @ref="_fluentValidationValidator" DisableAssemblyScanning="true"/>
         <ValidationSummary class="text-sm text-red-500 px-8" role="alert"/>
-        <input type="hidden" name="Dto.EventId" @bind-value="Dto.EventId"/>
+        @* <input type="hidden" name="Dto.EventId" @bind-value="Dto.EventId"/> *@
         <div class="field label border small-round">
-            <InputText @bind-Value="Dto.Title" id="title" placeholder=" "/>
+            <InputText Value="@Dto.Title" ValueExpression="() => Dto.Title" ValueChanged="@((string? title) => UpdateSlug(title))" id="title" placeholder=" "/>
             <label for="title">Title</label>
         </div>
         <div class="field">
@@ -35,6 +36,7 @@
                         <label for="slug">Slug</label>
                     </div>
                 </div>
+                <button type="button" class="text-nowrap" @onclick="ReplaceSlug">Replace Slug</button>
             </div>
         </div>
         <div class="field label border small-round">
@@ -49,7 +51,7 @@
             <InputSelect id="category" @bind-Value="Dto.CategoryId">
                 @foreach (var category in _categories)
                 {
-                    <option value="@category.Id">@category.Name</option>
+                    <option value="@category.CategoryId">@category.Name</option>
                 }
             </InputSelect>
             <label>Category</label>
@@ -59,7 +61,7 @@
             <InputSelect id="speaker" @bind-Value="Dto.SpeakerId">
                 @foreach (var user in _users)
                 {
-                    <option value="@user.Id">@user.FirstName @user.LastName</option>
+                    <option value="@user.UserId">@user.FirstName @user.LastName</option>
                 }
             </InputSelect>
             <label>Speaker</label>

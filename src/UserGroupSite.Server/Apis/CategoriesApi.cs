@@ -11,6 +11,12 @@ public static class CategoriesApi
         var categoriesGroup = endpoints.MapGroup(SharedConstants.CategoryApiUrl);
         categoriesGroup.RequireAuthorization(SharedConstants.IsAdmin);
 
+        categoriesGroup.MapGet("/", async (ApplicationDbContext dbContext) =>
+        {
+            var categoryDtos = await dbContext.Categories.Select(c => c.ToDto()).ToListAsync();
+            return TypedResults.Ok(categoryDtos);
+        });
+        
         categoriesGroup.MapPost("/delete", async (
             ApplicationDbContext dbContext,
             [FromForm] int categoryId) =>

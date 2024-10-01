@@ -8,4 +8,5 @@ public static class Constants
     
     public static string CategoryApiUrl = "/api/categories";
     public static string EventApiUrl = "/api/events";
+    public static string UserApiUrl = "/api/users";
 }

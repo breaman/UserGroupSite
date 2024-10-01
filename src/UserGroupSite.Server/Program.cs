@@ -6,14 +6,16 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 using Serilog.Debugging;
-using UserGroupSite.Data.Interfaces;
+using UserGroupSite.Client.Services;
 using UserGroupSite.Server.Apis;
 using UserGroupSite.Server.Components;
 using UserGroupSite.Server.Components.Auth;
 using UserGroupSite.Server.Components.Email;
 using UserGroupSite.Server.Models;
+using UserGroupSite.Server.Services;
 using UserGroupSite.Shared.DTOs;
 using _Imports = UserGroupSite.Client._Imports;
+using IUserService = UserGroupSite.Data.Interfaces.IUserService;
 using SharedConstants = UserGroupSite.Shared.Models.Constants;
 
 SelfLog.Enable(msg => Debug.WriteLine(msg));
@@ -90,8 +92,13 @@ try
     builder.Services.AddTransient<IValidator<LoginDto>, LoginDtoValidator>();
     builder.Services.AddTransient<IValidator<RegisterDto>, RegisterDtoValidator>();
     builder.Services.AddTransient<IValidator<CategoryDto>, CategoryDtoValidator>();
-    builder.Services.AddTransient<IValidator<EventDto>, EventDtoValidator>();
     // End FluentValidator stuff
+    
+    // Add services for fetching data during SSR
+    builder.Services.AddScoped<ICategoryService, ServerCategoryService>();
+    builder.Services.AddScoped<IEventService, ServerEventService>();
+    builder.Services.AddScoped<IApplicationUserService, ServerApplicationUserService>();
+    // End services for SSR
     
     // Add application stuff
     builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -132,6 +139,7 @@ try
 
     app.MapCategoriesApi();
     app.MapEventsApi();
+    app.MapUsersApi();
     // Add additional endpoints required by the Identity /Account Razor components.
     app.MapAdditionalIdentityEndpoints();
 
