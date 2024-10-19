@@ -1,19 +1,14 @@
 @page "/Admin/CreateEvent"
 @page "/Admin/EditEvent/{EventId:int?}"
 
+<BlazoredToasts />
+
 <div class="row bottom-margin">
     <h3 class="max">@((_isEditing) ? "Edit" : "Create") Event</h3>
 
     @if (_isEditing)
     {
         <div>
-            @* <form action="@SharedConstants.EventApiUrl/delete" method="post" id="deleteForm" style="display: inline-block"> *@
-            @*     <AntiforgeryToken/> *@
-            @*     <input type="hidden" name="EventId" value="@Dto.EventId"/> *@
-            @*     <a class="button" onClick="(() => { var deleteForm = document.getElementById('deleteForm'); deleteForm.submit(); })()"> *@
-            @*         Delete *@
-            @*     </a> *@
-            @* </form> *@
             <button @onclick="() => DeleteEvent(Dto.EventId)">Delete</button>
         </div>
     }
