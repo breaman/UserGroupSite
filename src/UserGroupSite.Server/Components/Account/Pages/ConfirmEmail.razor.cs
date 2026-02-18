@@ -10,7 +10,7 @@ public partial class ConfirmEmail : ComponentBase
 {
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private string? _statusMessage;
 
     [CascadingParameter]

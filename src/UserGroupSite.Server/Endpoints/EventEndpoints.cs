@@ -1,7 +1,7 @@
+using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using System.Text;
 using UserGroupSite.Data.Models;
 using UserGroupSite.Shared.Events;
 

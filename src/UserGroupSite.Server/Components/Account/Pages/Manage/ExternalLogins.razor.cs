@@ -11,7 +11,7 @@ public partial class ExternalLogins : ComponentBase
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IUserStore<User> UserStore { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     public const string LinkLoginCallbackAction = "LinkLoginCallback";
 
     private User? _user;

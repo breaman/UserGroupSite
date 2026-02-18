@@ -11,7 +11,7 @@ public partial class LoginWith2fa : ComponentBase
     [Inject] UserManager<User> UserManager { get; set; } = default!;
     [Inject] IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] ILogger<LoginWith2fa> Logger { get; set; } = default!;
-    
+
     private string? _message;
     private User _user = default!;
 

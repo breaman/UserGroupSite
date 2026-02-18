@@ -1,0 +1,4 @@
+[*.cs]
+dotnet_diagnostic.IDE0005.severity = suggestion
+# Optional: also organize usings
+dotnet_sort_system_directives_first = true

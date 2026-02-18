@@ -10,7 +10,7 @@ public partial class ResetAuthenticator : ComponentBase
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private ILogger<ResetAuthenticator> Logger { get; set; } = default!;
-    
+
     [CascadingParameter]
     private HttpContext HttpContext { get; set; } = default!;
 

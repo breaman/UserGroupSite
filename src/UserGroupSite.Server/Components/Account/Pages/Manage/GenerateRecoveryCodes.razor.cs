@@ -9,7 +9,7 @@ public partial class GenerateRecoveryCodes : ComponentBase
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private ILogger<GenerateRecoveryCodes> Logger { get; set; } = default!;
-    
+
     private string? _message;
     private User? _user;
     private IEnumerable<string>? _recoveryCodes;

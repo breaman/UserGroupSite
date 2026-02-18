@@ -11,7 +11,7 @@ public partial class DeletePersonalData : ComponentBase
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private ILogger<DeletePersonalData> Logger { get; set; } = default!;
-    
+
     private string? _message;
     private User? _user;
     private bool _requirePassword;

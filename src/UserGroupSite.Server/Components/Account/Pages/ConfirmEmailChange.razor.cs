@@ -21,7 +21,7 @@ public partial class ConfirmEmailChange : ComponentBase
 
     [SupplyParameterFromQuery]
     private string? Code { get; set; }
-    
+
     [Inject] UserManager<User> UserManager { get; set; } = default!;
     [Inject] SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] IdentityRedirectManager RedirectManager { get; set; } = default!;

@@ -18,7 +18,7 @@ public partial class ExternalLogin : ComponentBase
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private ILogger<ExternalLogin> Logger { get; set; } = default!;
-    
+
     public const string LoginCallbackAction = "LoginCallback";
 
     private string? _message;

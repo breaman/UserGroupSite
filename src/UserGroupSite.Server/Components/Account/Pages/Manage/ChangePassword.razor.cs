@@ -11,7 +11,7 @@ public partial class ChangePassword : ComponentBase
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private ILogger<ChangePassword> Logger { get; set; } = default!;
-    
+
     private string? _message;
     private User? _user;
     private bool _hasPassword;

@@ -11,7 +11,7 @@ public partial class ResetPassword : ComponentBase
 {
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
-    
+
     private IEnumerable<IdentityError>? _identityErrors;
 
     [SupplyParameterFromForm]

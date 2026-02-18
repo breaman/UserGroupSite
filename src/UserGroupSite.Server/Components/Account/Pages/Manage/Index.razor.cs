@@ -10,7 +10,7 @@ public partial class Index : ComponentBase
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private User? _user;
     private string? _username;
     private string? _phoneNumber;

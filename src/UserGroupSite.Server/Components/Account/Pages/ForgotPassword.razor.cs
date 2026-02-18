@@ -14,7 +14,7 @@ public partial class ForgotPassword : ComponentBase
     [Inject] private IEmailSender<User> EmailSender { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = default!;
 
