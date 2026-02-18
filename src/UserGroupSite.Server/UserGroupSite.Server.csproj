@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" />
+    <PackageReference Include="Microsoft.AspNetCore.Diagnostics.EntityFrameworkCore" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\aspire\UserGroupSite.ServiceDefaults\UserGroupSite.ServiceDefaults.csproj" />
+    <ProjectReference Include="..\UserGroupSite.Client\UserGroupSite.Client.csproj" />
+    <ProjectReference Include="..\UserGroupSite.Data\UserGroupSite.Data.csproj" />
+  </ItemGroup>
+
+</Project>
