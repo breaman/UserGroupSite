@@ -11,6 +11,15 @@
                         <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
                     </NavLink>
                 </li>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/admin/events/new">
+                                <span class="bi bi-calendar-event" aria-hidden="true"></span> New Event
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
             </ul>
         </div>
     </div>
