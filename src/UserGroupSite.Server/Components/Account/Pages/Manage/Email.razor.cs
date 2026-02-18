@@ -14,7 +14,7 @@ public partial class Email : ComponentBase
     [Inject] private IEmailSender<User> EmailSender { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private string? _message;
     private User? _user;
     private string? _email;

@@ -10,7 +10,7 @@ public partial class RenamePasskey : ComponentBase
 {
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private User? _user;
     private UserPasskeyInfo? _passkey;
 

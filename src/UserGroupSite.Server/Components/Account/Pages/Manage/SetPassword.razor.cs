@@ -10,7 +10,7 @@ public partial class SetPassword : ComponentBase
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private string? _message;
     private User? _user;
 

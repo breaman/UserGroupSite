@@ -6,7 +6,7 @@ namespace UserGroupSite.Server.Components.Account.Shared;
 public partial class PasskeySubmit : ComponentBase
 {
     [Inject] private IServiceProvider Services { get; set; } = default!;
-    
+
     private AntiforgeryTokenSet? _tokens;
 
     [CascadingParameter]

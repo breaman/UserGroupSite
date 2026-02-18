@@ -9,12 +9,12 @@ namespace UserGroupSite.Server.Components.Account.Pages;
 
 public partial class Login : ComponentBase
 {
-    [Inject] UserManager<User> UserManager { get; set;} = default!;
+    [Inject] UserManager<User> UserManager { get; set; } = default!;
     [Inject] SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] ILogger<Login> Logger { get; set; } = default!;
     [Inject] NavigationManager NavigationManager { get; set; } = default!;
     [Inject] IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private string? _errorMessage;
     private EditContext _editContext = default!;
 

@@ -46,6 +46,6 @@ public partial class ResendEmailConfirmation : ComponentBase
 
     private sealed class InputModel
     {
-        [Required] [EmailAddress] public string Email { get; set; } = "";
+        [Required][EmailAddress] public string Email { get; set; } = "";
     }
 }

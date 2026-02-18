@@ -9,9 +9,9 @@ public partial class ExternalLoginPicker : ComponentBase
 {
     [Inject] private SignInManager<User> SignInManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
-    
+
     private AuthenticationScheme[] _externalLogins = [];
-    
+
     [SupplyParameterFromQuery]
     private string? ReturnUrl { get; set; }
 

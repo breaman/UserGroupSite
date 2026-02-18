@@ -12,7 +12,7 @@ var dbPassword = builder.AddParameter("sql-password", "P@ssw0rd!")
 var sqlServer = builder.AddSqlServer("sqlserver", dbPassword)
     .WithContainerName("usergroupsite-sqlserver");
 
-if (osArch == System.Runtime.InteropServices.Architecture.Arm64 
+if (osArch == System.Runtime.InteropServices.Architecture.Arm64
     && System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
 {
     sqlServer.WithImage("azure-sql-edge");
@@ -20,6 +20,24 @@ if (osArch == System.Runtime.InteropServices.Architecture.Arm64
 
 var db = sqlServer.WithLifetime(ContainerLifetime.Persistent)
     .AddDatabase(Constants.DatabaseConnectionString);
+
+//DBGate is a database viewer
+var dbGate = builder.AddContainer("dbgate", "dbgate/dbgate")
+    .WithExplicitStart()
+    .WithLifetime(ContainerLifetime.Persistent)
+    .WithContainerName("case-amp-db-gate")
+    .WithHttpEndpoint(targetPort: 3000)
+    .WaitFor(sqlServer)
+    .WithEnvironment("CONNECTIONS", "mssql")
+    .WithEnvironment("LABEL_mssql", "MS SQL")
+    .WithEnvironment("SERVER_mssql", "host.docker.internal")
+    .WithEnvironment("PORT_mssql", () => (
+        $"{sqlServer.Resource.PrimaryEndpoint.Port}"
+    ))
+    .WithEnvironment("USER_mssql", "sa")
+    .WithEnvironment("PASSWORD_mssql", dbPassword)
+    .WithEnvironment("ENGINE_mssql", "mssql@dbgate-plugin-mssql")
+    .WithParentRelationship(sqlServer);
 
 var migrations = builder.AddExecutable("db-migrations", "dotnet", "../../src/UserGroupSite.Server",
     [

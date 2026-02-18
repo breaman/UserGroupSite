@@ -4,6 +4,7 @@ using UserGroupSite.Data.Models;
 using UserGroupSite.Server.Components;
 using UserGroupSite.Server.Components.Account;
 using UserGroupSite.Server.Components.Email;
+using UserGroupSite.Server.Endpoints;
 using UserGroupSite.ServiceDefaults;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -87,5 +88,6 @@ app.MapRazorComponents<App>()
     .AddAdditionalAssemblies(typeof(UserGroupSite.Client._Imports).Assembly);
 
 app.MapAdditionalIdentityEndpoints();
+app.MapEventEndpoints();
 
 app.Run();

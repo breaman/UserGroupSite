@@ -9,7 +9,7 @@ public partial class Disable2fa : ComponentBase
     [Inject] private UserManager<User> UserManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
     [Inject] private ILogger<Disable2fa> Logger { get; set; } = default!;
-    
+
     private User? _user;
 
     [CascadingParameter]
