@@ -63,13 +63,13 @@
             {
                 <div class="text-danger">@loadError</div>
             }
-            else if (speakerOptions.Count == 0)
+            else if (SpeakerOptions is null || SpeakerOptions.Count == 0)
             {
                 <p>No eligible speakers found.</p>
             }
             else
             {
-                @foreach (var speaker in speakerOptions)
+                @foreach (var speaker in SpeakerOptions)
                 {
                     <div class="form-check">
                         <input class="form-check-input"

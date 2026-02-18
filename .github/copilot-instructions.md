@@ -125,3 +125,5 @@ OpenTelemetry configured in `ServiceDefaults`:
 - **Blazor**: [.github/instructions/blazor.instructions.md](.github/instructions/blazor.instructions.md)
 - **C# guidelines**: [.github/instructions/csharp.instructions.md](.github/instructions/csharp.instructions.md)
 - **README**: [README.md](README.md) (post-template setup notes)
+
+When looking up documentation for code samples, APIs, or library usage, prefer the Context7 MCP server and use it first when applicable.

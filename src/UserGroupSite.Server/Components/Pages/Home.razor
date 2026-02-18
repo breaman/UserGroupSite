@@ -1,6 +1,39 @@
 @page "/"
-<h3>Home</h3>
 
-<p>Welcome to your homepage</p>
-<p>With hot reload? Why did it think that worked for some reason?</p>
-<p>Now do I have hot reload?</p>
+<header class="mb-4">
+	<h1 class="mb-1">Upcoming events</h1>
+	<p class="text-muted mb-0">Discover what is coming up next and plan your calendar.</p>
+</header>
+
+@if (isLoading)
+{
+	<p class="text-muted">Loading events...</p>
+}
+else if (loadError is not null)
+{
+	<div class="alert alert-danger" role="alert">@loadError</div>
+}
+else if (events.Count == 0)
+{
+	<p class="text-muted">No events scheduled yet. Check back soon.</p>
+}
+else
+{
+	<section class="row g-4" aria-label="Event list">
+		@foreach (var eventItem in events)
+		{
+			<div class="col-12 col-md-6 col-lg-4">
+				<article class="card h-100 shadow-sm">
+					<div class="card-body d-flex flex-column gap-2">
+						<div class="text-muted small">
+							<div>@eventItem.EventDateTime.ToLocalTime().ToString("f")</div>
+							<div>@eventItem.Location</div>
+						</div>
+						<h2 class="card-title h5 mb-0">@eventItem.Name</h2>
+						<p class="card-text mb-0">@eventItem.Description</p>
+					</div>
+				</article>
+			</div>
+		}
+	</section>
+}

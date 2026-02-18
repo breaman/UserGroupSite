@@ -1,9 +1,9 @@
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using UserGroupSite.Data.Models;
 using UserGroupSite.Shared.Events;
+using UserGroupSite.Shared.Services;
 
 namespace UserGroupSite.Server.Endpoints;
 
@@ -20,26 +20,16 @@ public static class EventEndpoints
         return app;
     }
 
-    private static async Task<Ok<IReadOnlyList<SpeakerOption>>> GetSpeakersAsync(UserManager<User> userManager)
+    private static async Task<Ok<IReadOnlyList<SpeakerOption>>> GetSpeakersAsync(ISpeakerService speakerService)
     {
-        var users = await GetEligibleSpeakersAsync(userManager);
-        var options = users
-            .OrderBy(user => user.LastName)
-            .ThenBy(user => user.FirstName)
-            .ThenBy(user => user.Email)
-            .Select(user => new SpeakerOption(
-                user.Id,
-                BuildDisplayName(user),
-                user.Email ?? string.Empty))
-            .ToList();
-
-        return TypedResults.Ok<IReadOnlyList<SpeakerOption>>(options);
+        var options = await speakerService.GetSpeakersAsync();
+        return TypedResults.Ok(options);
     }
 
     private static async Task<Results<Created<CreateEventResponse>, BadRequest<string>>> CreateEventAsync(
         CreateEventRequest request,
         ApplicationDbContext dbContext,
-        UserManager<User> userManager)
+        ISpeakerService speakerService)
     {
         if (string.IsNullOrWhiteSpace(request.Name) ||
             string.IsNullOrWhiteSpace(request.Description) ||
@@ -55,8 +45,8 @@ public static class EventEndpoints
 
         var normalizedEventDateTime = NormalizeToUtc(request.EventDateTimeUtc);
         var speakerIds = request.SpeakerIds?.Distinct().ToArray() ?? Array.Empty<int>();
-        var eligibleUsers = await GetEligibleSpeakersAsync(userManager);
-        var eligibleIds = eligibleUsers.Select(user => user.Id).ToHashSet();
+        var eligibleSpeakers = await speakerService.GetSpeakersAsync();
+        var eligibleIds = eligibleSpeakers.Select(speaker => speaker.Id).ToHashSet();
 
         if (speakerIds.Length > 0)
         {
@@ -68,8 +58,8 @@ public static class EventEndpoints
         }
 
         var slug = string.IsNullOrWhiteSpace(request.Slug)
-            ? ToSnakeCase(request.Name)
-            : ToSnakeCase(request.Slug);
+            ? ToKebabCase(request.Name)
+            : ToKebabCase(request.Slug);
 
         if (string.IsNullOrWhiteSpace(slug))
         {
@@ -99,40 +89,6 @@ public static class EventEndpoints
         return TypedResults.Created($"/api/events/{eventEntity.Id}", new CreateEventResponse(eventEntity.Id));
     }
 
-    private static async Task<List<User>> GetEligibleSpeakersAsync(UserManager<User> userManager)
-    {
-        var speakers = await userManager.GetUsersInRoleAsync("Speaker");
-        var admins = await userManager.GetUsersInRoleAsync("Admin");
-
-        return speakers
-            .Concat(admins)
-            .DistinctBy(user => user.Id)
-            .ToList();
-    }
-
-    private static string BuildDisplayName(User user)
-    {
-        var first = user.FirstName?.Trim();
-        var last = user.LastName?.Trim();
-
-        if (!string.IsNullOrWhiteSpace(first) && !string.IsNullOrWhiteSpace(last))
-        {
-            return $"{first} {last}";
-        }
-
-        if (!string.IsNullOrWhiteSpace(first))
-        {
-            return first;
-        }
-
-        if (!string.IsNullOrWhiteSpace(last))
-        {
-            return last;
-        }
-
-        return user.Email ?? "Unknown";
-    }
-
     private static DateTime NormalizeToUtc(DateTime value)
     {
         return value.Kind switch
@@ -143,7 +99,7 @@ public static class EventEndpoints
         };
     }
 
-    private static string ToSnakeCase(string value)
+    private static string ToKebabCase(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -160,7 +116,7 @@ public static class EventEndpoints
             {
                 if (char.IsUpper(c) && previousWasLowerOrDigit && !previousWasSeparator)
                 {
-                    builder.Append('_');
+                    builder.Append('-');
                 }
 
                 builder.Append(char.ToLowerInvariant(c));
@@ -171,12 +127,12 @@ public static class EventEndpoints
 
             if (!previousWasSeparator && builder.Length > 0)
             {
-                builder.Append('_');
+                builder.Append('-');
                 previousWasSeparator = true;
                 previousWasLowerOrDigit = false;
             }
         }
 
-        return builder.ToString().Trim('_');
+        return builder.ToString().Trim('-');
     }
 }

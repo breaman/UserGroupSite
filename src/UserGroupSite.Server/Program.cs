@@ -5,7 +5,9 @@ using UserGroupSite.Server.Components;
 using UserGroupSite.Server.Components.Account;
 using UserGroupSite.Server.Components.Email;
 using UserGroupSite.Server.Endpoints;
+using UserGroupSite.Server.Services;
 using UserGroupSite.ServiceDefaults;
+using UserGroupSite.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +19,9 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityRedirectManager>();
+
+// Register application services
+builder.Services.AddScoped<ISpeakerService, SpeakerService>();
 
 builder.Services.AddAuthentication(options =>
     {

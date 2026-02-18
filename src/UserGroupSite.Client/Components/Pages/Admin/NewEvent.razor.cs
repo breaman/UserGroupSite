@@ -4,15 +4,19 @@ using System.Net.Http.Json;
 using System.Text;
 using Microsoft.AspNetCore.Components;
 using UserGroupSite.Shared.Events;
+using UserGroupSite.Shared.Services;
 
-namespace UserGroupSite.Client.Components.Pages;
+namespace UserGroupSite.Client.Components.Pages.Admin;
 
-public partial class AdminCreateEvent : ComponentBase
+public partial class NewEvent : ComponentBase
 {
     [Inject] private HttpClient HttpClient { get; set; } = default!;
+    [Inject] private ISpeakerService SpeakerService { get; set; } = default!;
 
     private readonly InputModel Input = new();
-    private readonly List<SpeakerOption> speakerOptions = new();
+
+    [PersistentState]
+    public IReadOnlyList<SpeakerOption>? SpeakerOptions { get; set; }
 
     private bool isLoading = true;
     private bool isSubmitting;
@@ -22,7 +26,15 @@ public partial class AdminCreateEvent : ComponentBase
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadSpeakersAsync();
+        // Only load speakers if not already persisted from server prerender
+        if (SpeakerOptions is null || SpeakerOptions.Count == 0)
+        {
+            await LoadSpeakersAsync();
+        }
+        else
+        {
+            isLoading = false;
+        }
     }
 
     private async Task LoadSpeakersAsync()
@@ -32,17 +44,12 @@ public partial class AdminCreateEvent : ComponentBase
             isLoading = true;
             loadError = null;
 
-            var response = await HttpClient.GetFromJsonAsync<SpeakerOption[]>("/api/events/speakers");
-            speakerOptions.Clear();
-
-            if (response is not null)
-            {
-                speakerOptions.AddRange(response);
-            }
+            SpeakerOptions = await SpeakerService.GetSpeakersAsync();
         }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
             loadError = $"Failed to load speakers: {ex.Message}";
+            SpeakerOptions = Array.Empty<SpeakerOption>();
         }
         finally
         {
@@ -125,7 +132,7 @@ public partial class AdminCreateEvent : ComponentBase
             return;
         }
 
-        Input.Slug = ToSnakeCase(Input.Name);
+        Input.Slug = ToKebabCase(Input.Name);
     }
 
     private static bool TryParseEventDateTimeUtc(string? value, out DateTime utcDateTime)
@@ -146,7 +153,7 @@ public partial class AdminCreateEvent : ComponentBase
         return true;
     }
 
-    private static string ToSnakeCase(string value)
+    private static string ToKebabCase(string value)
     {
         if (string.IsNullOrWhiteSpace(value))
         {
@@ -163,7 +170,7 @@ public partial class AdminCreateEvent : ComponentBase
             {
                 if (char.IsUpper(c) && previousWasLowerOrDigit && !previousWasSeparator)
                 {
-                    builder.Append('_');
+                    builder.Append('-');
                 }
 
                 builder.Append(char.ToLowerInvariant(c));
@@ -174,13 +181,13 @@ public partial class AdminCreateEvent : ComponentBase
 
             if (!previousWasSeparator && builder.Length > 0)
             {
-                builder.Append('_');
+                builder.Append('-');
                 previousWasSeparator = true;
                 previousWasLowerOrDigit = false;
             }
         }
 
-        return builder.ToString().Trim('_');
+        return builder.ToString().Trim('-');
     }
 
     private sealed class InputModel
