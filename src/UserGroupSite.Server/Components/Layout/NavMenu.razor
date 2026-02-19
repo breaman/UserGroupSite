@@ -18,6 +18,29 @@
                                 <span class="bi bi-calendar-event" aria-hidden="true"></span> New Event
                             </NavLink>
                         </li>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/admin/users">
+                                <span class="bi bi-people-fill" aria-hidden="true"></span> Manage Users
+                            </NavLink>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+                <AuthorizeView>
+                    <NotAuthorized>
+                        <li class="nav-item">
+                            <NavLink class="nav-link" href="/account/login">
+                                <span class="bi bi-box-arrow-in-right" aria-hidden="true"></span> Log In
+                            </NavLink>
+                        </li>
+                    </NotAuthorized>
+                    <Authorized>
+                        <li class="nav-item">
+                            <form method="post" action="/Account/Logout" style="margin: 0;">
+                                <button type="submit" class="nav-link" style="border: none; background: none; cursor: pointer;">
+                                    <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Log Out
+                                </button>
+                            </form>
+                        </li>
                     </Authorized>
                 </AuthorizeView>
             </ul>

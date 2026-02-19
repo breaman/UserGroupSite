@@ -1,0 +1,43 @@
+@* Toast notification component *@
+
+<div class="position-fixed p-3" style="top: 20px; right: 20px; z-index: 12000;">
+    @foreach (var toast in toasts)
+    {
+        <div class="toast show align-items-center text-white border-0 mb-2 @(toast.IsSuccess ? "bg-success" : "bg-danger")" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body">
+                    @toast.Message
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    public record ToastMessage(string Message, bool IsSuccess);
+    private readonly List<ToastMessage> toasts = new();
+
+    public void ShowSuccess(string message)
+    {
+        ShowToast(message, isSuccess: true);
+    }
+
+    public void ShowError(string message)
+    {
+        ShowToast(message, isSuccess: false);
+    }
+
+    private void ShowToast(string message, bool isSuccess)
+    {
+        var toast = new ToastMessage(message, isSuccess);
+        toasts.Add(toast);
+        StateHasChanged();
+
+        // Auto-remove after 3 seconds
+        _ = Task.Delay(3000).ContinueWith(_ =>
+        {
+            toasts.Remove(toast);
+            InvokeAsync(StateHasChanged);
+        });
+    }
+}

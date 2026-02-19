@@ -1,0 +1,82 @@
+@page "/admin/users"
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.Authorization
+@using UserGroupSite.Shared.Users
+@attribute [Authorize(Roles = "Admin")]
+
+<PageTitle>Manage Users</PageTitle>
+
+<Toast @ref="toastComponent" />
+
+<h1>Manage users</h1>
+
+@if (isLoading)
+{
+    <p class="text-muted">Loading users...</p>
+}
+else if (!string.IsNullOrWhiteSpace(loadError))
+{
+    <div class="alert alert-danger" role="alert">@loadError</div>
+}
+else if (users.Count == 0)
+{
+    <p class="text-muted">No users found.</p>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-striped table-hover">
+            <thead class="table-light">
+                <tr>
+                    <th>Email</th>
+                    <th>Name</th>
+                    <th>Admin</th>
+                    <th>Speaker</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var user in users)
+                {
+                    <tr>
+                        <td>@user.Email</td>
+                        <td>
+                            @if (!string.IsNullOrWhiteSpace(user.FirstName) || !string.IsNullOrWhiteSpace(user.LastName))
+                            {
+                                <span>@user.FirstName @user.LastName</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">-</span>
+                            }
+                        </td>
+                        <td>
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   checked="@GetIsAdmin(user)"
+                                   @onchange="@((ChangeEventArgs args) => HandleAdminRoleChange(user.Id, GetIsAdmin(user), GetIsSpeaker(user), args))"
+                                   disabled="@isSubmitting" />
+                        </td>
+                        <td>
+                            <input type="checkbox"
+                                   class="form-check-input"
+                                   checked="@GetIsSpeaker(user)"
+                                   @onchange="@((ChangeEventArgs args) => HandleSpeakerRoleChange(user.Id, GetIsAdmin(user), GetIsSpeaker(user), args))"
+                                   disabled="@isSubmitting" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-primary" @onclick="() => SaveUserRoles(user.Id)" disabled="@(!pendingUpdates.ContainsKey(user.Id) || isSubmitting)">
+                                @if (isSubmitting && savingUserId == user.Id)
+                                {
+                                    <span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                                }
+                                Save
+                            </button>
+                            <button type="button" class="btn btn-sm btn-secondary" @onclick="() => ResetUserRoles(user.Id)" disabled="@(!pendingUpdates.ContainsKey(user.Id) || isSubmitting)">Cancel</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}

@@ -94,5 +94,6 @@ app.MapRazorComponents<App>()
 
 app.MapAdditionalIdentityEndpoints();
 app.MapEventEndpoints();
+app.MapUserEndpoints();
 
 app.Run();
