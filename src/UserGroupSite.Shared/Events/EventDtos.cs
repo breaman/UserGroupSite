@@ -14,3 +14,21 @@ public sealed record CreateEventRequest(
 
 /// <summary>Represents a response for a created event.</summary>
 public sealed record CreateEventResponse(int Id);
+
+/// <summary>Represents a request to update an event.</summary>
+public sealed record UpdateEventRequest(
+    string Name,
+    string Description,
+    DateTime EventDateTimeUtc,
+    string Location,
+    IReadOnlyList<int> SpeakerIds);
+
+/// <summary>Represents the details of an event for editing.</summary>
+public sealed record EventEditResponse(
+    int Id,
+    string Name,
+    string Slug,
+    string Description,
+    DateTime EventDateTimeUtc,
+    string Location,
+    IReadOnlyList<int> SpeakerIds);

@@ -7,6 +7,7 @@ using UserGroupSite.Server.Components.Email;
 using UserGroupSite.Server.Endpoints;
 using UserGroupSite.Server.Services;
 using UserGroupSite.ServiceDefaults;
+using UserGroupSite.Data.Interfaces;
 using UserGroupSite.Shared.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -19,9 +20,12 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<IdentityRedirectManager>();
+builder.Services.AddHttpContextAccessor();
 
 // Register application services
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
+builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<IUserService, HttpUserService>();
 
 builder.Services.AddAuthentication(options =>
     {
@@ -34,6 +38,9 @@ builder.Services.AddAuthorization();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString(Constants.DatabaseConnectionString))
         .EnableSensitiveDataLogging());
+builder.Services.AddDbContextFactory<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString(Constants.DatabaseConnectionString))
+        .EnableSensitiveDataLogging(), ServiceLifetime.Scoped);
 builder.EnrichSqlServerDbContext<ApplicationDbContext>();
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 

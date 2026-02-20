@@ -1,0 +1,106 @@
+@using Microsoft.AspNetCore.Components.Forms
+@using UserGroupSite.Shared.Events
+
+<EditForm Model="Input" OnValidSubmit="OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" />
+
+    <fieldset disabled="@IsSubmitting">
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" placeholder="Event name" @onblur="HandleNameBlur" />
+            <label for="Input.Name">Name</label>
+            <ValidationMessage For="() => Input.Name" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.Slug" id="Input.Slug" class="form-control" placeholder="event_name" readonly="@IsEditMode" />
+            <label for="Input.Slug">Slug@if (IsEditMode)
+            {
+                <span class="text-muted">(cannot be changed)</span>
+            }
+            </label>
+            <ValidationMessage For="() => Input.Slug" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputTextArea @bind-Value="Input.Description" id="Input.Description" class="form-control" placeholder="Event description" />
+            <label for="Input.Description">Description</label>
+            <ValidationMessage For="() => Input.Description" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.EventDateTimeLocal" id="Input.EventDateTimeLocal" type="datetime-local" class="form-control" />
+            <label for="Input.EventDateTimeLocal">Event date/time</label>
+            <ValidationMessage For="() => Input.EventDateTimeLocal" class="text-danger" />
+        </div>
+
+        <div class="form-floating mb-3">
+            <InputText @bind-Value="Input.Location" id="Input.Location" class="form-control" placeholder="Location" />
+            <label for="Input.Location">Location</label>
+            <ValidationMessage For="() => Input.Location" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Speakers</label>
+            @if (IsSpeakersLoading)
+            {
+                <p>Loading speakers...</p>
+            }
+            else if (!string.IsNullOrWhiteSpace(SpeakersError))
+            {
+                <div class="text-danger">@SpeakersError</div>
+            }
+            else if (SpeakerOptions is null || SpeakerOptions.Count == 0)
+            {
+                <p>No eligible speakers found.</p>
+            }
+            else
+            {
+                @foreach (var speaker in SpeakerOptions)
+                {
+                    <div class="form-check">
+                        <input class="form-check-input"
+                               type="checkbox"
+                               checked="@Input.SpeakerIds.Contains(speaker.Id)"
+                               @onchange="args => ToggleSpeaker(speaker.Id, args)" />
+                        <label class="form-check-label">
+                            @speaker.DisplayName (@speaker.Email)
+                        </label>
+                    </div>
+                }
+            }
+        </div>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">@SubmitButtonText</button>
+            @if (!string.IsNullOrWhiteSpace(CancelHref))
+            {
+                <a href="@CancelHref" class="btn btn-secondary">Cancel</a>
+            }
+        </div>
+    </fieldset>
+</EditForm>
+
+@code {
+    [Parameter] public EventFormInput Input { get; set; } = new();
+    [Parameter] public IReadOnlyList<SpeakerOption>? SpeakerOptions { get; set; }
+    [Parameter] public bool IsEditMode { get; set; }
+    [Parameter] public bool IsSubmitting { get; set; }
+    [Parameter] public bool IsSpeakersLoading { get; set; }
+    [Parameter] public string? SpeakersError { get; set; }
+    [Parameter] public string SubmitButtonText { get; set; } = "Submit";
+    [Parameter] public string? CancelHref { get; set; }
+    [Parameter] public EventCallback OnValidSubmit { get; set; }
+    [Parameter] public EventCallback<int> OnToggleSpeaker { get; set; }
+    [Parameter] public EventCallback OnNameBlur { get; set; }
+
+    private void HandleNameBlur()
+    {
+        OnNameBlur.InvokeAsync();
+    }
+
+    private void ToggleSpeaker(int speakerId, ChangeEventArgs args)
+    {
+        OnToggleSpeaker.InvokeAsync(speakerId);
+    }
+}
