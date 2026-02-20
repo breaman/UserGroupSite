@@ -8,82 +8,13 @@
 
 <h1>Create event</h1>
 
-<EditForm Model="Input" OnValidSubmit="HandleValidSubmit">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger" />
-
-    @if (!string.IsNullOrWhiteSpace(errorMessage))
-    {
-        <div class="alert alert-danger" role="alert">@errorMessage</div>
-    }
-
-    @if (!string.IsNullOrWhiteSpace(successMessage))
-    {
-        <div class="alert alert-success" role="alert">@successMessage</div>
-    }
-
-    <fieldset disabled="@isSubmitting">
-        <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.Name" id="Input.Name" class="form-control" placeholder="Event name" @onblur="HandleNameBlur" />
-            <label for="Input.Name">Name</label>
-            <ValidationMessage For="() => Input.Name" class="text-danger" />
-        </div>
-
-        <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.Slug" id="Input.Slug" class="form-control" placeholder="event_name" />
-            <label for="Input.Slug">Slug</label>
-            <ValidationMessage For="() => Input.Slug" class="text-danger" />
-        </div>
-
-        <div class="form-floating mb-3">
-            <InputTextArea @bind-Value="Input.Description" id="Input.Description" class="form-control" placeholder="Event description" />
-            <label for="Input.Description">Description</label>
-            <ValidationMessage For="() => Input.Description" class="text-danger" />
-        </div>
-
-        <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.EventDateTimeLocal" id="Input.EventDateTimeLocal" type="datetime-local" class="form-control" />
-            <label for="Input.EventDateTimeLocal">Event date/time</label>
-            <ValidationMessage For="() => Input.EventDateTimeLocal" class="text-danger" />
-        </div>
-
-        <div class="form-floating mb-3">
-            <InputText @bind-Value="Input.Location" id="Input.Location" class="form-control" placeholder="Location" />
-            <label for="Input.Location">Location</label>
-            <ValidationMessage For="() => Input.Location" class="text-danger" />
-        </div>
-
-        <div class="mb-3">
-            <label class="form-label">Speakers</label>
-            @if (isLoading)
-            {
-                <p>Loading speakers...</p>
-            }
-            else if (!string.IsNullOrWhiteSpace(loadError))
-            {
-                <div class="text-danger">@loadError</div>
-            }
-            else if (SpeakerOptions is null || SpeakerOptions.Count == 0)
-            {
-                <p>No eligible speakers found.</p>
-            }
-            else
-            {
-                @foreach (var speaker in SpeakerOptions)
-                {
-                    <div class="form-check">
-                        <input class="form-check-input"
-                               type="checkbox"
-                               checked="@Input.SpeakerIds.Contains(speaker.Id)"
-                               @onchange="args => ToggleSpeaker(speaker.Id, args)" />
-                        <label class="form-check-label">
-                            @speaker.DisplayName (@speaker.Email)
-                        </label>
-                    </div>
-                }
-            }
-        </div>
-
-        <button type="submit" class="btn btn-primary">Create event</button>
-    </fieldset>
-</EditForm>
+<EventForm
+    Input="Input"
+    SpeakerOptions="SpeakerOptions"
+    IsEditMode="false"
+    IsSubmitting="isSubmitting"
+    IsSpeakersLoading="isSpeakersLoading"
+    SubmitButtonText="Create event"
+    OnValidSubmit="HandleValidSubmit"
+    OnToggleSpeaker="HandleToggleSpeaker"
+    OnNameBlur="HandleNameBlur" />

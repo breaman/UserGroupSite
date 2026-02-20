@@ -8,7 +8,7 @@ namespace UserGroupSite.Server.Components.Pages;
 
 public partial class EventDetail : ComponentBase
 {
-    [Inject] private ApplicationDbContext DbContext { get; set; } = default!;
+    [Inject] private IDbContextFactory<ApplicationDbContext> DbContextFactory { get; set; } = default!;
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
     [Parameter] public string Slug { get; set; } = default!;
@@ -30,7 +30,9 @@ public partial class EventDetail : ComponentBase
             isLoading = true;
             loadError = null;
 
-            var eventEntity = await DbContext.Events
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+
+            var eventEntity = await dbContext.Events
                 .AsNoTracking()
                 .Include(e => e.Speakers)
                 .ThenInclude(es => es.Speaker)

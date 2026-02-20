@@ -6,7 +6,7 @@ namespace UserGroupSite.Server.Components.Pages;
 
 public partial class Home : ComponentBase
 {
-    [Inject] private ApplicationDbContext DbContext { get; set; } = default!;
+    [Inject] private IDbContextFactory<ApplicationDbContext> DbContextFactory { get; set; } = default!;
 
     private readonly List<EventSummary> events = new();
     private bool isLoading = true;
@@ -27,7 +27,9 @@ public partial class Home : ComponentBase
             loadError = null;
             events.Clear();
 
-            var items = await DbContext.Events
+            await using var dbContext = await DbContextFactory.CreateDbContextAsync();
+
+            var items = await dbContext.Events
                 .AsNoTracking()
                 .OrderByDescending(eventEntity => eventEntity.EventDateTime)
                 .Select(eventEntity => new EventSummary(

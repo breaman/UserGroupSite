@@ -1,0 +1,37 @@
+@page "/admin/events/{slug}/edit"
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.Authorization
+@using UserGroupSite.Shared.Events
+@attribute [Authorize(Roles = "Admin,Speaker")]
+
+<PageTitle>Edit Event</PageTitle>
+
+<h1>Edit event</h1>
+
+@if (isLoadingEvent)
+{
+	<p class="text-muted">Loading event...</p>
+}
+else if (!string.IsNullOrWhiteSpace(loadEventError))
+{
+	<div class="alert alert-danger" role="alert">@loadEventError</div>
+}
+else if (Input is null)
+{
+	<div class="alert alert-warning" role="alert">Event not found.</div>
+}
+else
+{
+	<EventForm
+		Input="Input"
+		SpeakerOptions="SpeakerOptions"
+		IsEditMode="true"
+		IsSubmitting="isSubmitting"
+		IsSpeakersLoading="isLoadingSpeakers"
+		SpeakersError="@loadSpeakersError"
+		SubmitButtonText="Update event"
+		CancelHref="@($"/events/{Slug}")"
+		OnValidSubmit="HandleValidSubmit"
+		OnToggleSpeaker="HandleToggleSpeaker"
+		OnNameBlur="SkipNameBlur" />
+}

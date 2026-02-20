@@ -16,5 +16,6 @@ builder.Services.AddScoped(sp =>
 
 // Register application services
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
+builder.Services.AddScoped<IEventService, EventService>();
 
 await builder.Build().RunAsync();
