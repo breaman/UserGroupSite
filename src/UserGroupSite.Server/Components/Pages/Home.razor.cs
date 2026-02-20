@@ -31,6 +31,8 @@ public partial class Home : ComponentBase
                 .AsNoTracking()
                 .OrderByDescending(eventEntity => eventEntity.EventDateTime)
                 .Select(eventEntity => new EventSummary(
+                    eventEntity.Id,
+                    eventEntity.Slug,
                     eventEntity.Name,
                     eventEntity.Description,
                     eventEntity.EventDateTime,
@@ -50,6 +52,8 @@ public partial class Home : ComponentBase
     }
 
     private sealed record EventSummary(
+        int Id,
+        string Slug,
         string Name,
         string Description,
         DateTime EventDateTime,

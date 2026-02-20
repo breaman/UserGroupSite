@@ -1,0 +1,57 @@
+@page "/events/{slug}"
+
+<PageTitle>@(eventDetail?.Name ?? "Event Details")</PageTitle>
+
+@if (isLoading)
+{
+	<p class="text-muted">Loading event...</p>
+}
+else if (loadError is not null)
+{
+	<div class="alert alert-danger" role="alert">@loadError</div>
+}
+else if (eventDetail is null)
+{
+	<div class="alert alert-warning" role="alert">Event not found.</div>
+}
+else
+{
+	<header class="mb-4">
+		<h1 class="mb-2">@eventDetail.Name</h1>
+		<div class="text-muted mb-3">
+			<div>
+				<i class="bi bi-calendar-event"></i> @eventDetail.EventDateTime.ToLocalTime().ToString("f")
+			</div>
+			<div>
+				<i class="bi bi-geo-alt"></i> @eventDetail.Location
+			</div>
+		</div>
+		@if (canEdit)
+		{
+			<a href="/admin/events/@eventDetail.Slug/edit" class="btn btn-primary">
+				<i class="bi bi-pencil"></i> Edit Event
+			</a>
+		}
+	</header>
+
+	<section class="mb-4">
+		<h2 class="h4 mb-3">Description</h2>
+		<p class="lead">@eventDetail.Description</p>
+	</section>
+
+	@if (eventDetail.Speakers.Count > 0)
+	{
+		<section class="mb-4">
+			<h2 class="h4 mb-3">Speakers</h2>
+			<ul class="list-unstyled">
+				@foreach (var speaker in eventDetail.Speakers)
+				{
+					<li class="mb-2">
+						<strong>@speaker.DisplayName</strong>
+						<span class="text-muted">(@speaker.Email)</span>
+					</li>
+				}
+			</ul>
+		</section>
+	}
+}
