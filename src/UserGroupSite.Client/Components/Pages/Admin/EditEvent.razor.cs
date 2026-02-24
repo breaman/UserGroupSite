@@ -74,7 +74,8 @@ public partial class EditEvent : ComponentBase
                 Slug = eventData.Slug,
                 Description = eventData.Description,
                 EventDateTimeLocal = eventDateTimeLocal,
-                Location = eventData.Location
+                Location = eventData.Location,
+                IsPublished = eventData.IsPublished
             };
 
             // Set speaker IDs
@@ -138,7 +139,8 @@ public partial class EditEvent : ComponentBase
             Input.Description.Trim(),
             eventDateTimeUtc,
             Input.Location.Trim(),
-            Input.SpeakerIds.ToArray());
+            Input.SpeakerIds.ToArray(),
+            Input.IsPublished);
 
         isSubmitting = true;
 

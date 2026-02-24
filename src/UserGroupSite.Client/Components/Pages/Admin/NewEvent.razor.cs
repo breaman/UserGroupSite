@@ -76,7 +76,8 @@ public partial class NewEvent : ComponentBase
             Input.Description.Trim(),
             eventDateTimeUtc,
             Input.Location.Trim(),
-            Input.SpeakerIds.ToArray());
+            Input.SpeakerIds.ToArray(),
+            Input.IsPublished);
 
         isSubmitting = true;
 

@@ -25,7 +25,11 @@ else
 			<div class="col-12 col-md-6 col-lg-4">
 				<article class="card h-100 shadow-sm">
 					<a href="/events/@eventItem.Slug" class="text-decoration-none text-reset">
-						<div class="card-body d-flex flex-column gap-2">
+						<div class="card-body d-flex flex-column gap-2 position-relative">
+							@if (!eventItem.IsPublished)
+							{
+								<i class="bi bi-lock-fill text-warning position-absolute top-0 end-0 mt-2 me-2" title="This event is not yet published"></i>
+							}
 							<div class="text-muted small">
 								<div>@eventItem.EventDateTime.ToLocalTime().ToString("f")</div>
 								<div>@eventItem.Location</div>

@@ -27,6 +27,8 @@ public class EventFormInput
 
     public HashSet<int> SpeakerIds { get; set; } = new();
 
+    public bool IsPublished { get; set; } = false;
+
     /// <summary>Converts event name to kebab-case slug.</summary>
     public string ToKebabCase(string value)
     {
@@ -74,6 +76,7 @@ public class EventFormInput
         EventDateTimeLocal = "";
         Location = "";
         SpeakerIds.Clear();
+        IsPublished = false;
     }
 
     /// <summary>Copies data from this model to a new instance.</summary>
@@ -85,7 +88,8 @@ public class EventFormInput
             Slug = Slug,
             Description = Description,
             EventDateTimeLocal = EventDateTimeLocal,
-            Location = Location
+            Location = Location,
+            IsPublished = IsPublished
         };
 
         foreach (var speakerId in SpeakerIds)

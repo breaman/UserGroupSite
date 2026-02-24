@@ -22,5 +22,7 @@ public class Event : FingerPrintEntityBase
     [MaxLength(200)]
     public string Location { get; set; } = "";
 
+    public bool IsPublished { get; set; } = false;
+
     public ICollection<EventSpeaker> Speakers { get; set; } = new List<EventSpeaker>();
 }
