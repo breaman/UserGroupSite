@@ -11,6 +11,7 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 - Prefer inline functions for smaller components but separate complex logic into code-behind or service classes.
 - Async/await should be used where applicable to ensure non-blocking UI operations.
 - When needing css for a component, favor using the bootstrap css framework and only use component-specific css when necessary, and place it in the same folder as the component with a .razor.css extension.
+- When utilizing icons, use the bootstrap icons library and ensure that icons are used consistently across the application for a cohesive user experience.
 
 ## Naming Conventions
 

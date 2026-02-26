@@ -47,7 +47,8 @@ public sealed class EventService : IEventService
             eventEntity.Description,
             eventEntity.EventDateTime,
             eventEntity.Location,
-            eventEntity.Speakers.Select(speaker => speaker.SpeakerId).ToArray());
+            eventEntity.Speakers.Select(speaker => speaker.SpeakerId).ToArray(),
+            eventEntity.IsPublished);
 
         return EventServiceResult<EventEditResponse>.Success(response);
     }
@@ -101,6 +102,7 @@ public sealed class EventService : IEventService
         eventEntity.Description = request.Description.Trim();
         eventEntity.Location = request.Location.Trim();
         eventEntity.EventDateTime = normalizedEventDateTime;
+        eventEntity.IsPublished = request.IsPublished;
 
         eventEntity.Speakers.Clear();
         foreach (var speakerId in speakerIds)

@@ -10,7 +10,8 @@ public sealed record CreateEventRequest(
     string Description,
     DateTime EventDateTimeUtc,
     string Location,
-    IReadOnlyList<int> SpeakerIds);
+    IReadOnlyList<int> SpeakerIds,
+    bool IsPublished = false);
 
 /// <summary>Represents a response for a created event.</summary>
 public sealed record CreateEventResponse(int Id);
@@ -21,7 +22,8 @@ public sealed record UpdateEventRequest(
     string Description,
     DateTime EventDateTimeUtc,
     string Location,
-    IReadOnlyList<int> SpeakerIds);
+    IReadOnlyList<int> SpeakerIds,
+    bool IsPublished = false);
 
 /// <summary>Represents the details of an event for editing.</summary>
 public sealed record EventEditResponse(
@@ -31,4 +33,5 @@ public sealed record EventEditResponse(
     string Description,
     DateTime EventDateTimeUtc,
     string Location,
-    IReadOnlyList<int> SpeakerIds);
+    IReadOnlyList<int> SpeakerIds,
+    bool IsPublished = false);

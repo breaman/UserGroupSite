@@ -43,6 +43,13 @@ public partial class EventDetail : ComponentBase
                 return;
             }
 
+            // Check if user can view this event
+            await CheckCanViewEventAsync(eventEntity);
+            if (loadError is not null)
+            {
+                return;
+            }
+
             var speakers = eventEntity.Speakers
                 .Select(es => new SpeakerInfo(
                     es.SpeakerId,
@@ -57,7 +64,8 @@ public partial class EventDetail : ComponentBase
                 eventEntity.Description,
                 eventEntity.EventDateTime,
                 eventEntity.Location,
-                speakers);
+                speakers,
+                eventEntity.IsPublished);
 
             // Check if user can edit
             await CheckCanEditAsync(eventEntity);
@@ -98,6 +106,37 @@ public partial class EventDetail : ComponentBase
         }
     }
 
+    private async Task CheckCanViewEventAsync(Event eventEntity)
+    {
+        // If event is published, everyone can view it
+        if (eventEntity.IsPublished)
+        {
+            return;
+        }
+
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        // Check if user is Admin
+        if (user.IsInRole("Admin"))
+        {
+            return;
+        }
+
+        // Check if user is a speaker for this event
+        var userIdClaim = user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (int.TryParse(userIdClaim, out var userId))
+        {
+            if (eventEntity.Speakers.Any(es => es.SpeakerId == userId))
+            {
+                return;
+            }
+        }
+
+        // User cannot view this event
+        loadError = "This event is not yet published. Only admins and speakers can view unpublished events.";
+    }
+
     private static string BuildDisplayName(User user)
     {
         if (!string.IsNullOrWhiteSpace(user.FirstName) || !string.IsNullOrWhiteSpace(user.LastName))
@@ -115,7 +154,8 @@ public partial class EventDetail : ComponentBase
         string Description,
         DateTime EventDateTime,
         string Location,
-        IReadOnlyList<SpeakerInfo> Speakers);
+        IReadOnlyList<SpeakerInfo> Speakers,
+        bool IsPublished);
 
     private sealed record SpeakerInfo(
         int Id,

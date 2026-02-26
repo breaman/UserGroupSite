@@ -77,7 +77,8 @@ public static class EventEndpoints
             Slug = slug,
             Description = request.Description.Trim(),
             Location = request.Location.Trim(),
-            EventDateTime = normalizedEventDateTime
+            EventDateTime = normalizedEventDateTime,
+            IsPublished = request.IsPublished
         };
 
         foreach (var speakerId in speakerIds)

@@ -14,10 +14,12 @@
 
         <div class="form-floating mb-3">
             <InputText @bind-Value="Input.Slug" id="Input.Slug" class="form-control" placeholder="event_name" readonly="@IsEditMode" />
-            <label for="Input.Slug">Slug@if (IsEditMode)
-            {
-                <span class="text-muted">(cannot be changed)</span>
-            }
+            <label for="Input.Slug">
+                Slug
+                @if (IsEditMode)
+                {
+                    <span class="text-muted">(cannot be changed)</span>
+                }
             </label>
             <ValidationMessage For="() => Input.Slug" class="text-danger" />
         </div>
@@ -38,6 +40,16 @@
             <InputText @bind-Value="Input.Location" id="Input.Location" class="form-control" placeholder="Location" />
             <label for="Input.Location">Location</label>
             <ValidationMessage For="() => Input.Location" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <div class="form-check form-switch">
+                <InputCheckbox @bind-Value="Input.IsPublished" id="Input.IsPublished" class="form-check-input" />
+                <label class="form-check-label" for="Input.IsPublished">
+                    Published
+                    <span class="text-muted small d-block">Only published events are visible to non-admin users</span>
+                </label>
+            </div>
         </div>
 
         <div class="mb-3">

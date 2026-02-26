@@ -17,7 +17,15 @@ else if (eventDetail is null)
 else
 {
 	<header class="mb-4">
-		<h1 class="mb-2">@eventDetail.Name</h1>
+		<div class="d-flex align-items-center gap-2">
+			<h1 class="mb-0">@eventDetail.Name</h1>
+			@if (!eventDetail.IsPublished)
+			{
+				<span class="badge bg-warning" title="This event is not yet published">
+					<i class="bi bi-lock-fill"></i> Not Published
+				</span>
+			}
+		</div>
 		<div class="text-muted mb-3">
 			<div>
 				<i class="bi bi-calendar-event"></i> @eventDetail.EventDateTime.ToLocalTime().ToString("f")
