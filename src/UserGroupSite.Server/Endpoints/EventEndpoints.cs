@@ -75,6 +75,7 @@ public static class EventEndpoints
         {
             Name = request.Name.Trim(),
             Slug = slug,
+            ShortDescription = request.ShortDescription?.Trim() ?? "",
             Description = request.Description.Trim(),
             Location = request.Location.Trim(),
             EventDateTime = normalizedEventDateTime,

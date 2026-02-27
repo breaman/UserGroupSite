@@ -72,6 +72,7 @@ public partial class EditEvent : ComponentBase
             {
                 Name = eventData.Name,
                 Slug = eventData.Slug,
+                ShortDescription = eventData.ShortDescription,
                 Description = eventData.Description,
                 EventDateTimeLocal = eventDateTimeLocal,
                 Location = eventData.Location,
@@ -136,6 +137,7 @@ public partial class EditEvent : ComponentBase
 
         var request = new UpdateEventRequest(
             Input.Name.Trim(),
+            Input.ShortDescription?.Trim() ?? "",
             Input.Description.Trim(),
             eventDateTimeUtc,
             Input.Location.Trim(),

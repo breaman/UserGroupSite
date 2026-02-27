@@ -1,5 +1,7 @@
 @using Microsoft.AspNetCore.Components.Forms
 @using UserGroupSite.Shared.Events
+@using UserGroupSite.Shared.Services
+@inject IMarkdownService MarkdownService
 
 <EditForm Model="Input" OnValidSubmit="OnValidSubmit">
     <DataAnnotationsValidator />
@@ -25,9 +27,47 @@
         </div>
 
         <div class="form-floating mb-3">
-            <InputTextArea @bind-Value="Input.Description" id="Input.Description" class="form-control" placeholder="Event description" />
-            <label for="Input.Description">Description</label>
-            <ValidationMessage For="() => Input.Description" class="text-danger" />
+            <InputText @bind-Value="Input.ShortDescription" id="Input.ShortDescription" class="form-control" placeholder="A brief summary of the event" />
+            <label for="Input.ShortDescription">Short Description</label>
+            <ValidationMessage For="() => Input.ShortDescription" class="text-danger" />
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description <span class="text-muted small">(Markdown supported)</span></label>
+            <ul class="nav nav-tabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button type="button" class="nav-link @(descriptionTab == "edit" ? "active" : "")"
+                            role="tab" @onclick='() => descriptionTab = "edit"'>
+                        <i class="bi bi-pencil"></i> Edit
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button type="button" class="nav-link @(descriptionTab == "preview" ? "active" : "")"
+                            role="tab" @onclick="ShowPreview">
+                        <i class="bi bi-eye"></i> Preview
+                    </button>
+                </li>
+            </ul>
+            <div class="tab-content border border-top-0 rounded-bottom p-3">
+                @if (descriptionTab == "edit")
+                {
+                    <InputTextArea @bind-Value="Input.Description" id="Input.Description" class="form-control" placeholder="Event description" style="min-height: 200px;" />
+                    <ValidationMessage For="() => Input.Description" class="text-danger" />
+                }
+                else
+                {
+                    @if (string.IsNullOrWhiteSpace(Input.Description))
+                    {
+                        <p class="text-muted fst-italic mb-0">Nothing to preview.</p>
+                    }
+                    else
+                    {
+                        <div class="markdown-preview">
+                            @((MarkupString)descriptionHtml)
+                        </div>
+                    }
+                }
+            </div>
         </div>
 
         <div class="form-floating mb-3">
@@ -105,6 +145,15 @@
     [Parameter] public EventCallback OnValidSubmit { get; set; }
     [Parameter] public EventCallback<int> OnToggleSpeaker { get; set; }
     [Parameter] public EventCallback OnNameBlur { get; set; }
+
+    private string descriptionTab = "edit";
+    private string descriptionHtml = string.Empty;
+
+    private void ShowPreview()
+    {
+        descriptionHtml = MarkdownService.ToHtml(Input.Description);
+        descriptionTab = "preview";
+    }
 
     private void HandleNameBlur()
     {

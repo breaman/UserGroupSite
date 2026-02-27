@@ -64,7 +64,7 @@ public partial class Home : ComponentBase
                     eventEntity.Id,
                     eventEntity.Slug,
                     eventEntity.Name,
-                    eventEntity.Description,
+                    eventEntity.ShortDescription,
                     eventEntity.EventDateTime,
                     eventEntity.Location,
                     eventEntity.IsPublished))
@@ -86,7 +86,7 @@ public partial class Home : ComponentBase
         int Id,
         string Slug,
         string Name,
-        string Description,
+        string ShortDescription,
         DateTime EventDateTime,
         string Location,
         bool IsPublished);

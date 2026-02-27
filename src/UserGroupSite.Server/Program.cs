@@ -26,6 +26,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IUserService, HttpUserService>();
+builder.Services.AddSingleton<IMarkdownService, MarkdownService>();
 
 builder.Services.AddAuthentication(options =>
     {

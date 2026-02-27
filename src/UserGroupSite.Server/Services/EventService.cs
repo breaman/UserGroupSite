@@ -44,6 +44,7 @@ public sealed class EventService : IEventService
             eventEntity.Id,
             eventEntity.Name,
             eventEntity.Slug,
+            eventEntity.ShortDescription,
             eventEntity.Description,
             eventEntity.EventDateTime,
             eventEntity.Location,
@@ -99,6 +100,7 @@ public sealed class EventService : IEventService
         }
 
         eventEntity.Name = request.Name.Trim();
+        eventEntity.ShortDescription = request.ShortDescription?.Trim() ?? "";
         eventEntity.Description = request.Description.Trim();
         eventEntity.Location = request.Location.Trim();
         eventEntity.EventDateTime = normalizedEventDateTime;

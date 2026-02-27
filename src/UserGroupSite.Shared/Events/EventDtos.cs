@@ -7,6 +7,7 @@ public sealed record SpeakerOption(int Id, string DisplayName, string Email);
 public sealed record CreateEventRequest(
     string Name,
     string Slug,
+    string ShortDescription,
     string Description,
     DateTime EventDateTimeUtc,
     string Location,
@@ -19,6 +20,7 @@ public sealed record CreateEventResponse(int Id);
 /// <summary>Represents a request to update an event.</summary>
 public sealed record UpdateEventRequest(
     string Name,
+    string ShortDescription,
     string Description,
     DateTime EventDateTimeUtc,
     string Location,
@@ -30,6 +32,7 @@ public sealed record EventEditResponse(
     int Id,
     string Name,
     string Slug,
+    string ShortDescription,
     string Description,
     DateTime EventDateTimeUtc,
     string Location,
