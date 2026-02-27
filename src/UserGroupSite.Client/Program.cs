@@ -17,6 +17,7 @@ builder.Services.AddScoped(sp =>
 // Register application services
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
 builder.Services.AddScoped<IEventService, EventService>();
+builder.Services.AddScoped<ITopicSuggestionService, TopicSuggestionService>();
 builder.Services.AddSingleton<IMarkdownService, MarkdownService>();
 
 await builder.Build().RunAsync();

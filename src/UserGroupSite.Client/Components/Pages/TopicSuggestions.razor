@@ -1,0 +1,133 @@
+@page "/topics"
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.Components.Authorization
+@using UserGroupSite.Shared.Topics
+@using UserGroupSite.Shared.Services
+
+<PageTitle>Topic Suggestions</PageTitle>
+
+<header class="mb-4">
+    <h1>Topic Suggestions</h1>
+    <p class="text-muted">Suggest topics you'd like to see at future meetups, like your favorites, or volunteer to speak.<b>You must be logged in to suggest, like, or volunteer for a topic.</b></p>
+</header>
+
+@if (!string.IsNullOrWhiteSpace(errorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @errorMessage
+        <button type="button" class="btn-close" @onclick="() => errorMessage = null" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrWhiteSpace(successMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @successMessage
+        <button type="button" class="btn-close" @onclick="() => successMessage = null" aria-label="Close"></button>
+    </div>
+}
+
+<AuthorizeView>
+    <Authorized Context="authContext">
+        <div class="card mb-4">
+            <div class="card-header">
+                <h2 class="h5 mb-0"><i class="bi bi-lightbulb"></i> Suggest a Topic</h2>
+            </div>
+            <div class="card-body">
+                <EditForm Model="newTopic" OnValidSubmit="HandleCreateTopic" FormName="newTopicForm">
+                    <DataAnnotationsValidator />
+                    <fieldset disabled="@isCreating">
+                        <div class="form-floating mb-3">
+                            <InputText @bind-Value="newTopic.Title" id="newTopic.Title" class="form-control" placeholder="Topic title" />
+                            <label for="newTopic.Title">Title</label>
+                            <ValidationMessage For="() => newTopic.Title" class="text-danger" />
+                        </div>
+                        <div class="form-floating mb-3">
+                            <InputTextArea @bind-Value="newTopic.Description" id="newTopic.Description" class="form-control" placeholder="Describe the topic" style="min-height: 100px;" />
+                            <label for="newTopic.Description">Description</label>
+                            <ValidationMessage For="() => newTopic.Description" class="text-danger" />
+                        </div>
+                        <button type="submit" class="btn btn-primary">
+                            @if (isCreating)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                            }
+                            Submit Suggestion
+                        </button>
+                    </fieldset>
+                </EditForm>
+            </div>
+        </div>
+    </Authorized>
+</AuthorizeView>
+
+<h2 class="h4 mb-3">All Suggestions</h2>
+
+@if (isLoading)
+{
+    <p class="text-muted">Loading suggestions...</p>
+}
+else if (topics.Count == 0)
+{
+    <p class="text-muted">No suggestions yet. Be the first to suggest a topic!</p>
+}
+else
+{
+    <div class="row g-3">
+        @foreach (var topic in topics)
+        {
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h3 class="h5 mb-1">@topic.Title</h3>
+                                <p class="mb-2">@topic.Description</p>
+                                <div class="text-muted small">
+                                    Suggested by <strong>@topic.SubmittedBy</strong>
+                                    on @topic.SubmittedOnUtc.ToLocalTime().ToString("MMM d, yyyy")
+                                </div>
+                                @if (topic.VolunteerSpeakerName is not null)
+                                {
+                                    <div class="mt-2">
+                                        <span class="badge bg-success">
+                                            <i class="bi bi-mic-fill"></i> Volunteer: @topic.VolunteerSpeakerName
+                                        </span>
+                                    </div>
+                                }
+                            </div>
+                            <div class="d-flex flex-column align-items-center gap-2 ms-3">
+                                <AuthorizeView>
+                                    <Authorized>
+                                        <button class="btn @(topic.HasLiked ? "btn-primary" : "btn-outline-primary") btn-sm d-flex align-items-center gap-1"
+                                                disabled="@(processingIds.Contains(topic.Id))"
+                                                @onclick="() => HandleLike(topic.Id)">
+                                            <i class="bi @(topic.HasLiked ? "bi-hand-thumbs-up-fill" : "bi-hand-thumbs-up")"></i>
+                                            <span>@topic.LikeCount</span>
+                                        </button>
+                                        @if (topic.VolunteerSpeakerId is null)
+                                        {
+                                            <button class="btn btn-outline-success btn-sm"
+                                                    disabled="@(processingIds.Contains(topic.Id))"
+                                                    @onclick="() => HandleVolunteer(topic.Id)"
+                                                    title="Volunteer to speak on this topic">
+                                                <i class="bi bi-hand-index"></i> Volunteer
+                                            </button>
+                                        }
+                                    </Authorized>
+                                    <NotAuthorized>
+                                        <span class="btn btn-outline-primary btn-sm d-flex align-items-center gap-1 disabled">
+                                            <i class="bi bi-hand-thumbs-up"></i>
+                                            <span>@topic.LikeCount</span>
+                                        </span>
+                                    </NotAuthorized>
+                                </AuthorizeView>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
