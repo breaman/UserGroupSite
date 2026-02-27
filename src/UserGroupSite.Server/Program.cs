@@ -26,6 +26,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITopicSuggestionService, TopicSuggestionService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddSingleton<IMarkdownService, MarkdownService>();
 
@@ -103,6 +104,7 @@ app.MapRazorComponents<App>()
 
 app.MapAdditionalIdentityEndpoints();
 app.MapEventEndpoints();
+app.MapCommentEndpoints();
 app.MapTopicSuggestionEndpoints();
 app.MapUserEndpoints();
 

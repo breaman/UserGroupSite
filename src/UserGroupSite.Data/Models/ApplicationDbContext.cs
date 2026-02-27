@@ -12,6 +12,7 @@ public class ApplicationDbContext : AuthDbContext
 
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventSpeaker> EventSpeakers => Set<EventSpeaker>();
+    public DbSet<EventComment> EventComments => Set<EventComment>();
     public DbSet<TopicSuggestion> TopicSuggestions => Set<TopicSuggestion>();
     public DbSet<TopicSuggestionLike> TopicSuggestionLikes => Set<TopicSuggestionLike>();
 
@@ -31,6 +32,17 @@ public class ApplicationDbContext : AuthDbContext
             .HasOne(eventSpeaker => eventSpeaker.Speaker)
             .WithMany()
             .HasForeignKey(eventSpeaker => eventSpeaker.SpeakerId);
+
+        modelBuilder.Entity<EventComment>()
+            .HasOne(comment => comment.Event)
+            .WithMany(eventEntity => eventEntity.Comments)
+            .HasForeignKey(comment => comment.EventId);
+
+        modelBuilder.Entity<EventComment>()
+            .HasOne(comment => comment.Author)
+            .WithMany()
+            .HasForeignKey(comment => comment.AuthorId)
+            .OnDelete(DeleteBehavior.NoAction);
 
         modelBuilder.Entity<TopicSuggestionLike>()
             .HasKey(like => new { like.TopicSuggestionId, like.UserId });
