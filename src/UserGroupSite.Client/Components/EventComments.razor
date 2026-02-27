@@ -1,0 +1,151 @@
+@rendermode InteractiveWebAssembly
+@using Microsoft.AspNetCore.Components.Authorization
+@using UserGroupSite.Shared.Comments
+@using UserGroupSite.Shared.Services
+
+<section class="mb-4" id="comments">
+    <h2 class="h4 mb-3"><i class="bi bi-chat-dots"></i> Comments</h2>
+
+    @if (!string.IsNullOrWhiteSpace(errorMessage))
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @errorMessage
+            <button type="button" class="btn-close" @onclick="() => errorMessage = null" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!string.IsNullOrWhiteSpace(successMessage))
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @successMessage
+            <button type="button" class="btn-close" @onclick="() => successMessage = null" aria-label="Close"></button>
+        </div>
+    }
+
+    <AuthorizeView>
+        <Authorized>
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h3 class="h6 mb-0"><i class="bi bi-pencil-square"></i> Leave a Comment</h3>
+                </div>
+                <div class="card-body">
+                    <fieldset disabled="@isSubmitting">
+                        <div class="mb-2">
+                            <ul class="nav nav-tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link @(showPreview ? "" : "active")"
+                                            type="button"
+                                            role="tab"
+                                            @onclick="() => showPreview = false">
+                                        <i class="bi bi-code"></i> Write
+                                    </button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link @(showPreview ? "active" : "")"
+                                            type="button"
+                                            role="tab"
+                                            @onclick="() => showPreview = true">
+                                        <i class="bi bi-eye"></i> Preview
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
+
+                        @if (showPreview)
+                        {
+                            <div class="border rounded p-3 mb-3 markdown-preview" style="min-height: 120px;">
+                                @if (string.IsNullOrWhiteSpace(newCommentContent))
+                                {
+                                    <p class="text-muted mb-0">Nothing to preview.</p>
+                                }
+                                else
+                                {
+                                    @((MarkupString)MarkdownService.ToHtml(newCommentContent))
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="mb-3">
+                                <textarea class="form-control"
+                                          rows="4"
+                                          maxlength="4000"
+                                          placeholder="Write your comment using Markdown..."
+                                          @bind="newCommentContent"
+                                          @bind:event="oninput"></textarea>
+                                <div class="form-text">
+                                    <i class="bi bi-markdown"></i> Markdown is supported.
+                                    @if (!string.IsNullOrWhiteSpace(newCommentContent))
+                                    {
+                                        <span class="float-end">@newCommentContent.Length / 4000</span>
+                                    }
+                                </div>
+                            </div>
+                        }
+
+                        <button type="button"
+                                class="btn btn-primary"
+                                disabled="@(isSubmitting || string.IsNullOrWhiteSpace(newCommentContent))"
+                                @onclick="HandleSubmitComment">
+                            @if (isSubmitting)
+                            {
+                                <span class="spinner-border spinner-border-sm me-1" aria-hidden="true"></span>
+                            }
+                            Post Comment
+                        </button>
+                    </fieldset>
+                </div>
+            </div>
+        </Authorized>
+        <NotAuthorized>
+            <div class="alert alert-info mb-4">
+                <i class="bi bi-info-circle"></i> <a href="/Account/Login">Log in</a> to leave a comment.
+            </div>
+        </NotAuthorized>
+    </AuthorizeView>
+
+    @if (isLoading)
+    {
+        <p class="text-muted">Loading comments...</p>
+    }
+    else if (comments.Count == 0)
+    {
+        <p class="text-muted">No comments yet. Be the first to share your thoughts!</p>
+    }
+    else
+    {
+        <div class="d-flex flex-column gap-3">
+            @foreach (var comment in comments)
+            {
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-2">
+                            <strong>@comment.AuthorName</strong>
+                            <small class="text-muted" title="@comment.CreatedOn.ToLocalTime().ToString("f")">
+                                @FormatRelativeTime(comment.CreatedOn)
+                            </small>
+                        </div>
+                        @if (expandedRawIds.Contains(comment.Id))
+                        {
+                            <pre class="border rounded p-2 mb-2 bg-light"><code>@comment.Content</code></pre>
+                            <button class="btn btn-sm btn-outline-secondary"
+                                    @onclick="() => expandedRawIds.Remove(comment.Id)">
+                                <i class="bi bi-eye"></i> Show rendered
+                            </button>
+                        }
+                        else
+                        {
+                            <div class="markdown-preview">
+                                @((MarkupString)MarkdownService.ToHtml(comment.Content))
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary mt-1"
+                                    @onclick="() => expandedRawIds.Add(comment.Id)">
+                                <i class="bi bi-code"></i> Show raw
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</section>

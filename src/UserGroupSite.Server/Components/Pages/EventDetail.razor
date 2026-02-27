@@ -1,5 +1,6 @@
 @page "/events/{slug}"
 @using UserGroupSite.Shared.Services
+@using UserGroupSite.Client.Components
 @inject IMarkdownService MarkdownService
 
 <PageTitle>@(eventDetail?.Name ?? "Event Details")</PageTitle>
@@ -69,5 +70,10 @@ else
 				}
 			</ul>
 		</section>
+	}
+
+	@if (eventDetail.IsPublished)
+	{
+		<EventComments EventSlug="@eventDetail.Slug" />
 	}
 }

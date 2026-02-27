@@ -18,6 +18,7 @@ builder.Services.AddScoped(sp =>
 builder.Services.AddScoped<ISpeakerService, SpeakerService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<ITopicSuggestionService, TopicSuggestionService>();
+builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddSingleton<IMarkdownService, MarkdownService>();
 
 await builder.Build().RunAsync();
