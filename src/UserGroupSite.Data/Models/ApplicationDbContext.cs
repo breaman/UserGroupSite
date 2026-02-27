@@ -12,6 +12,8 @@ public class ApplicationDbContext : AuthDbContext
 
     public DbSet<Event> Events => Set<Event>();
     public DbSet<EventSpeaker> EventSpeakers => Set<EventSpeaker>();
+    public DbSet<TopicSuggestion> TopicSuggestions => Set<TopicSuggestion>();
+    public DbSet<TopicSuggestionLike> TopicSuggestionLikes => Set<TopicSuggestionLike>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -29,6 +31,25 @@ public class ApplicationDbContext : AuthDbContext
             .HasOne(eventSpeaker => eventSpeaker.Speaker)
             .WithMany()
             .HasForeignKey(eventSpeaker => eventSpeaker.SpeakerId);
+
+        modelBuilder.Entity<TopicSuggestionLike>()
+            .HasKey(like => new { like.TopicSuggestionId, like.UserId });
+
+        modelBuilder.Entity<TopicSuggestionLike>()
+            .HasOne(like => like.TopicSuggestion)
+            .WithMany(topic => topic.Likes)
+            .HasForeignKey(like => like.TopicSuggestionId);
+
+        modelBuilder.Entity<TopicSuggestionLike>()
+            .HasOne(like => like.User)
+            .WithMany()
+            .HasForeignKey(like => like.UserId);
+
+        modelBuilder.Entity<TopicSuggestion>()
+            .HasOne(topic => topic.VolunteerSpeaker)
+            .WithMany()
+            .HasForeignKey(topic => topic.VolunteerSpeakerId)
+            .IsRequired(false);
 
         modelBuilder.Entity<Role>().HasData(
             new Role
