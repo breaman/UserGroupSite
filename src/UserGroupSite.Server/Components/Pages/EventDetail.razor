@@ -1,4 +1,6 @@
 @page "/events/{slug}"
+@using UserGroupSite.Shared.Services
+@inject IMarkdownService MarkdownService
 
 <PageTitle>@(eventDetail?.Name ?? "Event Details")</PageTitle>
 
@@ -44,7 +46,13 @@ else
 
 	<section class="mb-4">
 		<h2 class="h4 mb-3">Description</h2>
-		<p class="lead">@eventDetail.Description</p>
+		@if (!string.IsNullOrWhiteSpace(eventDetail.ShortDescription))
+		{
+			<p class="lead text-muted">@eventDetail.ShortDescription</p>
+		}
+		<div class="markdown-preview">
+			@((MarkupString)MarkdownService.ToHtml(eventDetail.Description))
+		</div>
 	</section>
 
 	@if (eventDetail.Speakers.Count > 0)

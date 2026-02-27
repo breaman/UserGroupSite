@@ -73,6 +73,7 @@ public partial class NewEvent : ComponentBase
         var request = new CreateEventRequest(
             Input.Name.Trim(),
             Input.Slug.Trim(),
+            Input.ShortDescription?.Trim() ?? "",
             Input.Description.Trim(),
             eventDateTimeUtc,
             Input.Location.Trim(),

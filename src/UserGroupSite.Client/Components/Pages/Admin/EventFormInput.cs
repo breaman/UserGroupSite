@@ -14,6 +14,9 @@ public class EventFormInput
     [MaxLength(200)]
     public string Slug { get; set; } = "";
 
+    [MaxLength(500)]
+    public string ShortDescription { get; set; } = "";
+
     [Required]
     [MaxLength(2000)]
     public string Description { get; set; } = "";
@@ -72,6 +75,7 @@ public class EventFormInput
     {
         Name = "";
         Slug = "";
+        ShortDescription = "";
         Description = "";
         EventDateTimeLocal = "";
         Location = "";
@@ -86,6 +90,7 @@ public class EventFormInput
         {
             Name = Name,
             Slug = Slug,
+            ShortDescription = ShortDescription,
             Description = Description,
             EventDateTimeLocal = EventDateTimeLocal,
             Location = Location,
