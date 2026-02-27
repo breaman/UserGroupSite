@@ -34,7 +34,8 @@ public static class EventEndpoints
     private static async Task<Results<Created<CreateEventResponse>, BadRequest<string>>> CreateEventAsync(
         CreateEventRequest request,
         IDbContextFactory<ApplicationDbContext> dbContextFactory,
-        ISpeakerService speakerService)
+        ISpeakerService speakerService,
+        IMeetupService meetupService)
     {
         if (string.IsNullOrWhiteSpace(request.Name) ||
             string.IsNullOrWhiteSpace(request.Description) ||
@@ -93,6 +94,22 @@ public static class EventEndpoints
         await using var dbContext = await dbContextFactory.CreateDbContextAsync();
         dbContext.Events.Add(eventEntity);
         await dbContext.SaveChangesAsync();
+
+        // Publish to Meetup.com when the event is created as published and hasn't been posted yet
+        if (eventEntity.IsPublished && string.IsNullOrWhiteSpace(eventEntity.MeetupEventId))
+        {
+            var meetupEventId = await meetupService.CreateEventAsync(
+                eventEntity.Name,
+                eventEntity.Description,
+                eventEntity.EventDateTime,
+                eventEntity.Location);
+
+            if (!string.IsNullOrWhiteSpace(meetupEventId))
+            {
+                eventEntity.MeetupEventId = meetupEventId;
+                await dbContext.SaveChangesAsync();
+            }
+        }
 
         return TypedResults.Created($"/api/events/{eventEntity.Id}", new CreateEventResponse(eventEntity.Id));
     }

@@ -10,14 +10,20 @@ public sealed class EventService : IEventService
 {
     private readonly IDbContextFactory<ApplicationDbContext> _dbContextFactory;
     private readonly ISpeakerService _speakerService;
+    private readonly IMeetupService _meetupService;
 
     /// <summary>Initializes a new instance of the <see cref="EventService"/> class.</summary>
     /// <param name="dbContextFactory">The factory used to create isolated DbContext instances.</param>
     /// <param name="speakerService">The speaker service used to validate speaker eligibility.</param>
-    public EventService(IDbContextFactory<ApplicationDbContext> dbContextFactory, ISpeakerService speakerService)
+    /// <param name="meetupService">The Meetup.com service used to publish events externally.</param>
+    public EventService(
+        IDbContextFactory<ApplicationDbContext> dbContextFactory,
+        ISpeakerService speakerService,
+        IMeetupService meetupService)
     {
         _dbContextFactory = dbContextFactory;
         _speakerService = speakerService;
+        _meetupService = meetupService;
     }
 
     /// <inheritdoc />
@@ -117,6 +123,22 @@ public sealed class EventService : IEventService
         }
 
         await dbContext.SaveChangesAsync();
+
+        // Publish to Meetup.com when the event transitions to published and hasn't been posted yet
+        if (eventEntity.IsPublished && string.IsNullOrWhiteSpace(eventEntity.MeetupEventId))
+        {
+            var meetupEventId = await _meetupService.CreateEventAsync(
+                eventEntity.Name,
+                eventEntity.Description,
+                eventEntity.EventDateTime,
+                eventEntity.Location);
+
+            if (!string.IsNullOrWhiteSpace(meetupEventId))
+            {
+                eventEntity.MeetupEventId = meetupEventId;
+                await dbContext.SaveChangesAsync();
+            }
+        }
 
         return EventServiceResult.Success();
     }

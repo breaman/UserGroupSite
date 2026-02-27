@@ -29,6 +29,8 @@ builder.Services.AddScoped<ITopicSuggestionService, TopicSuggestionService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IUserService, HttpUserService>();
 builder.Services.AddSingleton<IMarkdownService, MarkdownService>();
+builder.Services.AddHttpClient();
+builder.Services.AddScoped<IMeetupService, MeetupService>();
 
 builder.Services.AddAuthentication(options =>
     {

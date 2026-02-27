@@ -27,6 +27,10 @@ public class Event : FingerPrintEntityBase
 
     public bool IsPublished { get; set; } = false;
 
+    /// <summary>The Meetup.com event ID, populated after the event is first published to Meetup.</summary>
+    [MaxLength(50)]
+    public string? MeetupEventId { get; set; }
+
     public ICollection<EventSpeaker> Speakers { get; set; } = new List<EventSpeaker>();
 
     public ICollection<EventComment> Comments { get; set; } = new List<EventComment>();
