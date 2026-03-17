@@ -10,8 +10,20 @@ applyTo: '**/*.razor, **/*.razor.cs, **/*.razor.css'
 - Use Razor Components appropriately for component-based UI development.
 - Prefer inline functions for smaller components but separate complex logic into code-behind or service classes.
 - Async/await should be used where applicable to ensure non-blocking UI operations.
+
+## UI Conventions
+
 - When needing css for a component, favor using the bootstrap css framework and only use component-specific css when necessary, and place it in the same folder as the component with a .razor.css extension.
 - When utilizing icons, use the bootstrap icons library and ensure that icons are used consistently across the application for a cohesive user experience.
+- All new form input controls must be wrapped in a Bootstrap `form-floating` div.
+Example structure:
+```html
+<div class="form-floating mb-3">
+<InputText @bind-Value="Model.Property" id="Model.Property" class="form-control" placeholder="..." />
+<label for="Model.Property">Label Text</label>
+<ValidationMessage For="() => Model.Property" class="text-danger" />
+</div>
+```
 
 ## Naming Conventions
 
