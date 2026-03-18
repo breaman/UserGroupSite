@@ -9,6 +9,9 @@ using UserGroupSite.Server.Services;
 using UserGroupSite.ServiceDefaults;
 using UserGroupSite.Data.Interfaces;
 using UserGroupSite.Shared.Services;
+using UserGroupSite.Server.Models;
+using Microsoft.Extensions.Options;
+using Mailjet.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -68,7 +71,21 @@ builder.Services.AddIdentityCore<User>(options =>
     .AddSignInManager()
     .AddDefaultTokenProviders();
 
-builder.Services.AddSingleton<IEmailSender<User>, IdentityNoOpEmailSender>();
+builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
+builder.Services.AddKeyedScoped<IEmailSender<User>, IdentityNoOpEmailSender>("noop");
+builder.Services.AddKeyedScoped<IEmailSender<User>, IdentityMailjetEmailSender>("mailjet");
+builder.Services.AddScoped(serviceProvider =>
+    {
+        var options =serviceProvider.GetRequiredService<IOptions<AppSettings>>();
+        return serviceProvider.GetRequiredKeyedService<IEmailSender<User>>(options.Value.Email?.ServiceName);
+    });
+
+builder.Services.AddHttpClient<IMailjetClient, MailjetClient>(client =>
+{
+    client.SetDefaultSettings();
+    client.UseBasicAuthentication(builder.Configuration.GetValue<string>("MailJet:ApiKey"),
+        builder.Configuration.GetValue<string>("MailJet:ApiSecret"));
+});
 
 // Add route configuration to enforce lowercase URLs for better SEO
 builder.Services.Configure<RouteOptions>(options =>
