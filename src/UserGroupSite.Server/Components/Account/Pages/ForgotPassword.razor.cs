@@ -14,6 +14,7 @@ public partial class ForgotPassword : ComponentBase
     [Inject] private IEmailSender<User> EmailSender { get; set; } = default!;
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
     [Inject] private IdentityRedirectManager RedirectManager { get; set; } = default!;
+    [Inject] private ILogger<ForgotPassword> Logger { get; set; } = default!;
 
     [SupplyParameterFromForm]
     private InputModel Input { get; set; } = default!;
@@ -29,6 +30,7 @@ public partial class ForgotPassword : ComponentBase
         if (user is null || !(await UserManager.IsEmailConfirmedAsync(user)))
         {
             // Don't reveal that the user does not exist or is not confirmed
+            Logger.LogWarning("Forgot password attempt for non-existent or unconfirmed user: {Email}", Input.Email);
             RedirectManager.RedirectTo("Account/ForgotPasswordConfirmation");
             return;
         }
@@ -41,7 +43,9 @@ public partial class ForgotPassword : ComponentBase
             NavigationManager.ToAbsoluteUri("Account/ResetPassword").AbsoluteUri,
             new Dictionary<string, object?> { ["code"] = code });
 
+        Logger.LogInformation("Password reset link being sent to user: {Email}", Input.Email);
         await EmailSender.SendPasswordResetLinkAsync(user, Input.Email, HtmlEncoder.Default.Encode(callbackUrl));
+        
 
         RedirectManager.RedirectTo("Account/ForgotPasswordConfirmation");
     }
